@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>Kevin G. Householder</h1>
+
+  <h3>{% block title %}System Studies Engineer III at Mitsubishi Electric Power Products, Inc.{% endblock title %}</h3>
+{% endblock header %}
+
+{% block content %}
+  <p>
+    Learn more about this project by visiting the <a href="{{ url_for('pages.about') }}">About page</a>.
+  </p>
+{% endblock content %}
