@@ -7,7 +7,29 @@
 {% endblock header %}
 
 {% block content %}
-  <p>
-    Learn more about this project by visiting the <a href="{{ url_for('pages.about') }}">About page</a>.
-  </p>
+  <div class="split">
+    <div class = "split-left">
+      <p>
+        <!-- Learn more about this project by visiting the <a href="{{ url_for('pages.about') }}">About page</a>. -->
+        Kevin Householder is a System Studies Engineer III at Mitsubishi Electric Power Products, Inc.  The majority of his work is related to consulting 
+        utility companies about Electromagnetic Transient (EMT) phenomena that may harm their power systems.  Kevin attended the University of Pittsburgh 
+        for undergraduate studies, and took a liking to programming almost immediately.  Prior to working at MEPPI, Kevin worked at the CMU Software 
+        Engineering Institute (SEI) in computer forensics and reverse engineering microcontrollers.  He also worked at the UPMC McGowan Institute on a touch 
+        screen motor controller interface used to control the speed of a motor used in an artificial lung called PAAL (Pittsburgh Ambulatory Assist Lung) that 
+        is aimed to help people who have severely reduced lung function.  Kevin plans to obtain a graduate degree in Artificial Intelligence at Johns Hopkins 
+        University, but currently Kevin is unsure what field he wants to go into after completing his graduate degree (ideally, it will not be consulting).
+        The picture I have included on the right is from when I was playing shows with my band.
+      </p>
+    </div>
+
+    <div class = "split-right">
+      <img
+        src="{{ url_for('static', filename='img/cool.jpg') }}"
+        alt="Kevin pic"
+        class="split-img"
+      />
+    </div>
+  </div>
+
+
 {% endblock content %}

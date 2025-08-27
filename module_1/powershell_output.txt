@@ -1,0 +1,923 @@
+Windows PowerShell
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Try the new cross-platform PowerShell https://aka.ms/pscore6
+
+PS C:\Users\Kevin> python -m venv venv
+PS C:\Users\Kevin> .\venv\Scripts\activate
+(venv) PS C:\Users\Kevin> python -m pip install Flask
+Collecting Flask
+  Downloading flask-3.1.2-py3-none-any.whl (103 kB)
+     |████████████████████████████████| 103 kB 409 kB/s
+Collecting itsdangerous>=2.2.0
+  Downloading itsdangerous-2.2.0-py3-none-any.whl (16 kB)
+Collecting blinker>=1.9.0
+  Downloading blinker-1.9.0-py3-none-any.whl (8.5 kB)
+Collecting markupsafe>=2.1.1
+  Downloading MarkupSafe-3.0.2-cp39-cp39-win_amd64.whl (15 kB)
+Collecting jinja2>=3.1.2
+  Downloading jinja2-3.1.6-py3-none-any.whl (134 kB)
+     |████████████████████████████████| 134 kB 1.3 MB/s
+Collecting importlib-metadata>=3.6.0; python_version < "3.10"
+  Downloading importlib_metadata-8.7.0-py3-none-any.whl (27 kB)
+Collecting click>=8.1.3
+  Downloading click-8.1.8-py3-none-any.whl (98 kB)
+     |████████████████████████████████| 98 kB 2.2 MB/s
+Collecting werkzeug>=3.1.0
+  Downloading werkzeug-3.1.3-py3-none-any.whl (224 kB)
+     |████████████████████████████████| 224 kB 2.2 MB/s
+Collecting zipp>=3.20
+  Downloading zipp-3.23.0-py3-none-any.whl (10 kB)
+Collecting colorama; platform_system == "Windows"
+  Downloading colorama-0.4.6-py2.py3-none-any.whl (25 kB)
+Installing collected packages: itsdangerous, blinker, markupsafe, jinja2, zipp, importlib-metadata, colorama, click, werkzeug, Flask
+Successfully installed Flask-3.1.2 blinker-1.9.0 click-8.1.8 colorama-0.4.6 importlib-metadata-8.7.0 itsdangerous-2.2.0 jinja2-3.1.6 markupsafe-3.0.2 werkzeug-3.1.3 zipp-3.23.0
+WARNING: You are using pip version 20.2.3; however, version 25.2 is available.
+You should consider upgrading via the 'C:\Users\Kevin\venv\Scripts\python.exe -m pip install --upgrade pip' command.
+(venv) PS C:\Users\Kevin> cd Documents
+(venv) PS C:\Users\Kevin\Documents> cd Github
+(venv) PS C:\Users\Kevin\Documents\Github> cd jhu_software_concepts
+(venv) PS C:\Users\Kevin\Documents\Github\jhu_software_concepts> cd module_1
+(venv) PS C:\Users\Kevin\Documents\Github\jhu_software_concepts\module_1> cd rp_flask_board
+(venv) PS C:\Users\Kevin\Documents\Github\jhu_software_concepts\module_1\rp_flask_board> python app.py
+ * Serving Flask app 'app'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://10.0.0.196:8000
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 790-253-965
+127.0.0.1 - - [25/Aug/2025 19:57:48] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 19:57:49] "GET /favicon.ico HTTP/1.1" 404 -
+(venv) PS C:\Users\Kevin\Documents\Github\jhu_software_concepts\module_1\rp_flask_board> mkdir board
+
+
+    Directory: C:\Users\Kevin\Documents\Github\jhu_software_concepts\module_1\rp_flask_board
+
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----         8/25/2025   7:59 PM                board
+
+
+(venv) PS C:\Users\Kevin\Documents\Github\jhu_software_concepts\module_1\rp_flask_board> ls
+
+
+    Directory: C:\Users\Kevin\Documents\Github\jhu_software_concepts\module_1\rp_flask_board
+
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----         8/25/2025   7:59 PM                board
+-a----         8/25/2025   7:56 PM            190 app.py
+
+
+(venv) PS C:\Users\Kevin\Documents\Github\jhu_software_concepts\module_1\rp_flask_board> mv app.py board/__init__.py
+(venv) PS C:\Users\Kevin\Documents\Github\jhu_software_concepts\module_1\rp_flask_board> python -m flask --app board run --port 8000 --debug
+ * Serving Flask app 'board'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:8000
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 790-253-965
+127.0.0.1 - - [25/Aug/2025 20:00:44] "GET / HTTP/1.1" 200 -
+(venv) PS C:\Users\Kevin\Documents\Github\jhu_software_concepts\module_1\rp_flask_board> ^C
+(venv) PS C:\Users\Kevin\Documents\Github\jhu_software_concepts\module_1\rp_flask_board> python -m flask --app board run --port 8000 --debug
+ * Serving Flask app 'board'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:8000
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 790-253-965
+127.0.0.1 - - [25/Aug/2025 20:04:36] "GET / HTTP/1.1" 404 -
+127.0.0.1 - - [25/Aug/2025 20:04:37] "GET / HTTP/1.1" 404 -
+127.0.0.1 - - [25/Aug/2025 20:04:39] "GET / HTTP/1.1" 404 -
+(venv) PS C:\Users\Kevin\Documents\Github\jhu_software_concepts\module_1\rp_flask_board> cd board
+(venv) PS C:\Users\Kevin\Documents\Github\jhu_software_concepts\module_1\rp_flask_board\board> python -m flask --app board run --port 8000 --debug
+Usage: python -m flask run [OPTIONS]
+Try 'python -m flask run --help' for help.
+
+Error: Could not import 'board.board'.
+(venv) PS C:\Users\Kevin\Documents\Github\jhu_software_concepts\module_1\rp_flask_board\board>
+(venv) PS C:\Users\Kevin\Documents\Github\jhu_software_concepts\module_1\rp_flask_board\board> cd ..
+(venv) PS C:\Users\Kevin\Documents\Github\jhu_software_concepts\module_1\rp_flask_board> python -m flask --app board run --port 8000 --debug
+ * Serving Flask app 'board'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:8000
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 790-253-965
+127.0.0.1 - - [25/Aug/2025 20:09:43] "GET /about HTTP/1.1" 200 -
+(venv) PS C:\Users\Kevin\Documents\Github\jhu_software_concepts\module_1\rp_flask_board> python -m flask --app board run --port 8000 --debug
+ * Serving Flask app 'board'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:8000
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 790-253-965
+127.0.0.1 - - [25/Aug/2025 20:15:28] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 20:15:34] "GET / HTTP/1.1" 200 -
+ * Detected change in 'C:\\Users\\Kevin\\Documents\\Github\\jhu_software_concepts\\module_1\\rp_flask_board\\board\\pages.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 790-253-965
+(venv) PS C:\Users\Kevin\Documents\Github\jhu_software_concepts\module_1\rp_flask_board> python -m flask --app board run --port 8000 --debug
+ * Serving Flask app 'board'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:8000
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 790-253-965
+127.0.0.1 - - [25/Aug/2025 20:16:29] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 20:16:31] "GET /about HTTP/1.1" 200 -
+(venv) PS C:\Users\Kevin\Documents\Github\jhu_software_concepts\module_1\rp_flask_board> python -m flask --app board run --port 8000 --debug
+ * Serving Flask app 'board'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:8000
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 790-253-965
+127.0.0.1 - - [25/Aug/2025 20:18:14] "GET /about HTTP/1.1" 200 -
+(venv) PS C:\Users\Kevin\Documents\Github\jhu_software_concepts\module_1\rp_flask_board> python -m flask --app board run --port 8000 --debug
+ * Serving Flask app 'board'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:8000
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 790-253-965
+127.0.0.1 - - [25/Aug/2025 20:20:57] "GET /about HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 20:20:58] "GET /static/styles.css HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 20:21:04] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 20:21:04] "GET /static/styles.css HTTP/1.1" 304 -
+(venv) PS C:\Users\Kevin\Documents\Github\jhu_software_concepts\module_1\rp_flask_board> python -m flask --app board run --port 8000 --debug
+ * Serving Flask app 'board'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:8000
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 790-253-965
+127.0.0.1 - - [25/Aug/2025 20:22:14] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 20:22:14] "GET /static/styles.css HTTP/1.1" 304 -
+ * Detected change in 'C:\\Users\\Kevin\\Documents\\Github\\jhu_software_concepts\\module_1\\rp_flask_board\\board\\pages.py', reloading
+ * Restarting with stat
+Traceback (most recent call last):
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\cli.py", line 963, in run_command
+    app: WSGIApplication = info.load_app()  # pyright: ignore
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\cli.py", line 349, in load_app
+    app = locate_app(import_name, name)
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\cli.py", line 262, in locate_app
+    return find_best_app(module)
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\cli.py", line 72, in find_best_app
+    app = app_factory()
+  File "C:\Users\Kevin\Documents\GitHub\jhu_software_concepts\module_1\rp_flask_board\board\__init__.py", line 8, in create_app
+    app.register_blueprint(pages.bp)
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\sansio\scaffold.py", line 47, in wrapper_func
+    return f(self, *args, **kwargs)
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\sansio\app.py", line 595, in register_blueprint
+    blueprint.register(self, options)
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\sansio\blueprints.py", line 335, in register
+    deferred(state)
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\sansio\blueprints.py", line 434, in <lambda>
+    lambda s: s.add_url_rule(
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\sansio\blueprints.py", line 110, in add_url_rule
+    self.app.add_url_rule(
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\sansio\scaffold.py", line 47, in wrapper_func
+    return f(self, *args, **kwargs)
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\sansio\app.py", line 657, in add_url_rule
+    raise AssertionError(
+AssertionError: View function mapping is overwriting an existing endpoint function: pages.about
+ * Debugger is active!
+ * Debugger PIN: 536-476-369
+(venv) PS C:\Users\Kevin\Documents\Github\jhu_software_concepts\module_1\rp_flask_board> python -m flask --app board run --port 8000 --debug
+Traceback (most recent call last):
+  File "C:\Python39\lib\runpy.py", line 197, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "C:\Python39\lib\runpy.py", line 87, in _run_code
+    exec(code, run_globals)
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\__main__.py", line 3, in <module>
+    main()
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\cli.py", line 1131, in main
+    cli.main()
+  File "C:\Users\Kevin\venv\lib\site-packages\click\core.py", line 1082, in main
+    rv = self.invoke(ctx)
+  File "C:\Users\Kevin\venv\lib\site-packages\click\core.py", line 1697, in invoke
+    return _process_result(sub_ctx.command.invoke(sub_ctx))
+  File "C:\Users\Kevin\venv\lib\site-packages\click\core.py", line 1443, in invoke
+    return ctx.invoke(self.callback, **ctx.params)
+  File "C:\Users\Kevin\venv\lib\site-packages\click\core.py", line 788, in invoke
+    return __callback(*args, **kwargs)
+  File "C:\Users\Kevin\venv\lib\site-packages\click\decorators.py", line 92, in new_func
+    return ctx.invoke(f, obj, *args, **kwargs)
+  File "C:\Users\Kevin\venv\lib\site-packages\click\core.py", line 788, in invoke
+    return __callback(*args, **kwargs)
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\cli.py", line 979, in run_command
+    raise e from None
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\cli.py", line 963, in run_command
+    app: WSGIApplication = info.load_app()  # pyright: ignore
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\cli.py", line 349, in load_app
+    app = locate_app(import_name, name)
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\cli.py", line 262, in locate_app
+    return find_best_app(module)
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\cli.py", line 72, in find_best_app
+    app = app_factory()
+  File "C:\Users\Kevin\Documents\GitHub\jhu_software_concepts\module_1\rp_flask_board\board\__init__.py", line 8, in create_app
+    app.register_blueprint(pages.bp)
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\sansio\scaffold.py", line 47, in wrapper_func
+    return f(self, *args, **kwargs)
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\sansio\app.py", line 595, in register_blueprint
+    blueprint.register(self, options)
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\sansio\blueprints.py", line 335, in register
+    deferred(state)
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\sansio\blueprints.py", line 434, in <lambda>
+    lambda s: s.add_url_rule(
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\sansio\blueprints.py", line 110, in add_url_rule
+    self.app.add_url_rule(
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\sansio\scaffold.py", line 47, in wrapper_func
+    return f(self, *args, **kwargs)
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\sansio\app.py", line 657, in add_url_rule
+    raise AssertionError(
+AssertionError: View function mapping is overwriting an existing endpoint function: pages.about
+(venv) PS C:\Users\Kevin\Documents\Github\jhu_software_concepts\module_1\rp_flask_board> python -m flask --app board run --port 8000 --debug
+Traceback (most recent call last):
+  File "C:\Python39\lib\runpy.py", line 197, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "C:\Python39\lib\runpy.py", line 87, in _run_code
+    exec(code, run_globals)
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\__main__.py", line 3, in <module>
+    main()
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\cli.py", line 1131, in main
+    cli.main()
+  File "C:\Users\Kevin\venv\lib\site-packages\click\core.py", line 1082, in main
+    rv = self.invoke(ctx)
+  File "C:\Users\Kevin\venv\lib\site-packages\click\core.py", line 1697, in invoke
+    return _process_result(sub_ctx.command.invoke(sub_ctx))
+  File "C:\Users\Kevin\venv\lib\site-packages\click\core.py", line 1443, in invoke
+    return ctx.invoke(self.callback, **ctx.params)
+  File "C:\Users\Kevin\venv\lib\site-packages\click\core.py", line 788, in invoke
+    return __callback(*args, **kwargs)
+  File "C:\Users\Kevin\venv\lib\site-packages\click\decorators.py", line 92, in new_func
+    return ctx.invoke(f, obj, *args, **kwargs)
+  File "C:\Users\Kevin\venv\lib\site-packages\click\core.py", line 788, in invoke
+    return __callback(*args, **kwargs)
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\cli.py", line 979, in run_command
+    raise e from None
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\cli.py", line 963, in run_command
+    app: WSGIApplication = info.load_app()  # pyright: ignore
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\cli.py", line 349, in load_app
+    app = locate_app(import_name, name)
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\cli.py", line 262, in locate_app
+    return find_best_app(module)
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\cli.py", line 72, in find_best_app
+    app = app_factory()
+  File "C:\Users\Kevin\Documents\GitHub\jhu_software_concepts\module_1\rp_flask_board\board\__init__.py", line 8, in create_app
+    app.register_blueprint(pages.bp)
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\sansio\scaffold.py", line 47, in wrapper_func
+    return f(self, *args, **kwargs)
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\sansio\app.py", line 595, in register_blueprint
+    blueprint.register(self, options)
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\sansio\blueprints.py", line 335, in register
+    deferred(state)
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\sansio\blueprints.py", line 434, in <lambda>
+    lambda s: s.add_url_rule(
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\sansio\blueprints.py", line 110, in add_url_rule
+    self.app.add_url_rule(
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\sansio\scaffold.py", line 47, in wrapper_func
+    return f(self, *args, **kwargs)
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\sansio\app.py", line 657, in add_url_rule
+    raise AssertionError(
+AssertionError: View function mapping is overwriting an existing endpoint function: pages.about
+(venv) PS C:\Users\Kevin\Documents\Github\jhu_software_concepts\module_1\rp_flask_board> python -m flask --app board run --port 8000 --debug
+Traceback (most recent call last):
+  File "C:\Python39\lib\runpy.py", line 197, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "C:\Python39\lib\runpy.py", line 87, in _run_code
+    exec(code, run_globals)
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\__main__.py", line 3, in <module>
+    main()
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\cli.py", line 1131, in main
+    cli.main()
+  File "C:\Users\Kevin\venv\lib\site-packages\click\core.py", line 1082, in main
+    rv = self.invoke(ctx)
+  File "C:\Users\Kevin\venv\lib\site-packages\click\core.py", line 1697, in invoke
+    return _process_result(sub_ctx.command.invoke(sub_ctx))
+  File "C:\Users\Kevin\venv\lib\site-packages\click\core.py", line 1443, in invoke
+    return ctx.invoke(self.callback, **ctx.params)
+  File "C:\Users\Kevin\venv\lib\site-packages\click\core.py", line 788, in invoke
+    return __callback(*args, **kwargs)
+  File "C:\Users\Kevin\venv\lib\site-packages\click\decorators.py", line 92, in new_func
+    return ctx.invoke(f, obj, *args, **kwargs)
+  File "C:\Users\Kevin\venv\lib\site-packages\click\core.py", line 788, in invoke
+    return __callback(*args, **kwargs)
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\cli.py", line 979, in run_command
+    raise e from None
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\cli.py", line 963, in run_command
+    app: WSGIApplication = info.load_app()  # pyright: ignore
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\cli.py", line 349, in load_app
+    app = locate_app(import_name, name)
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\cli.py", line 262, in locate_app
+    return find_best_app(module)
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\cli.py", line 72, in find_best_app
+    app = app_factory()
+  File "C:\Users\Kevin\Documents\GitHub\jhu_software_concepts\module_1\rp_flask_board\board\__init__.py", line 8, in create_app
+    app.register_blueprint(pages.bp)
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\sansio\scaffold.py", line 47, in wrapper_func
+    return f(self, *args, **kwargs)
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\sansio\app.py", line 595, in register_blueprint
+    blueprint.register(self, options)
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\sansio\blueprints.py", line 335, in register
+    deferred(state)
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\sansio\blueprints.py", line 434, in <lambda>
+    lambda s: s.add_url_rule(
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\sansio\blueprints.py", line 110, in add_url_rule
+    self.app.add_url_rule(
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\sansio\scaffold.py", line 47, in wrapper_func
+    return f(self, *args, **kwargs)
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\sansio\app.py", line 657, in add_url_rule
+    raise AssertionError(
+AssertionError: View function mapping is overwriting an existing endpoint function: pages.about
+(venv) PS C:\Users\Kevin\Documents\Github\jhu_software_concepts\module_1\rp_flask_board> python -m flask --app board run --port 8000 --debug
+ * Serving Flask app 'board'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:8000
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 790-253-965
+127.0.0.1 - - [25/Aug/2025 20:37:55] "GET / HTTP/1.1" 500 -
+Traceback (most recent call last):
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\app.py", line 1536, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\app.py", line 1514, in wsgi_app
+    response = self.handle_exception(e)
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "C:\Users\Kevin\Documents\GitHub\jhu_software_concepts\module_1\rp_flask_board\board\pages.py", line 7, in home
+    return render_template("pages/home.html")
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+  File "C:\Users\Kevin\venv\lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Kevin\venv\lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "C:\Users\Kevin\Documents\GitHub\jhu_software_concepts\module_1\rp_flask_board\board\templates\pages\home.html", line 1, in top-level template code
+    {% extends 'base.html' %}
+  File "C:\Users\Kevin\Documents\GitHub\jhu_software_concepts\module_1\rp_flask_board\board\templates\base.html", line 9, in top-level template code
+    {% include("_navigation.html") %}
+  File "C:\Users\Kevin\Documents\GitHub\jhu_software_concepts\module_1\rp_flask_board\board\templates\_navigation.html", line 5, in top-level template code
+    <li><a href="{{ url_for('pages.contact') }}">Contact Information</a></li>
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\app.py", line 1121, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\app.py", line 1110, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+  File "C:\Users\Kevin\venv\lib\site-packages\werkzeug\routing\map.py", line 924, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'pages.contact'. Did you mean 'pages.about' instead?
+127.0.0.1 - - [25/Aug/2025 20:37:56] "GET /?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 20:37:56] "GET /?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 20:37:56] "GET /?__debugger__=yes&cmd=resource&f=console.png&s=MhATyOdoPhHCXJLmvHn7 HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 20:37:57] "GET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 20:37:57] "GET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 20:38:03] "GET / HTTP/1.1" 500 -
+Traceback (most recent call last):
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\app.py", line 1536, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\app.py", line 1514, in wsgi_app
+    response = self.handle_exception(e)
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\app.py", line 1511, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\app.py", line 919, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+  File "C:\Users\Kevin\Documents\GitHub\jhu_software_concepts\module_1\rp_flask_board\board\pages.py", line 7, in home
+    return render_template("pages/home.html")
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+  File "C:\Users\Kevin\venv\lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "C:\Users\Kevin\venv\lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "C:\Users\Kevin\Documents\GitHub\jhu_software_concepts\module_1\rp_flask_board\board\templates\pages\home.html", line 1, in top-level template code
+    {% extends 'base.html' %}
+  File "C:\Users\Kevin\Documents\GitHub\jhu_software_concepts\module_1\rp_flask_board\board\templates\base.html", line 9, in top-level template code
+    {% include("_navigation.html") %}
+  File "C:\Users\Kevin\Documents\GitHub\jhu_software_concepts\module_1\rp_flask_board\board\templates\_navigation.html", line 5, in top-level template code
+    <li><a href="{{ url_for('pages.contact') }}">Contact Information</a></li>
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\app.py", line 1121, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\app.py", line 1110, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+  File "C:\Users\Kevin\venv\lib\site-packages\werkzeug\routing\map.py", line 924, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'pages.contact'. Did you mean 'pages.about' instead?
+127.0.0.1 - - [25/Aug/2025 20:38:04] "GET /?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 20:38:04] "GET /?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 20:38:04] "GET /?__debugger__=yes&cmd=resource&f=console.png&s=MhATyOdoPhHCXJLmvHn7 HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 20:38:04] "GET /?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 304 -
+ * Detected change in 'C:\\Users\\Kevin\\Documents\\GitHub\\jhu_software_concepts\\module_1\\rp_flask_board\\board\\pages.py', reloading
+ * Restarting with stat
+Traceback (most recent call last):
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\cli.py", line 963, in run_command
+    app: WSGIApplication = info.load_app()  # pyright: ignore
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\cli.py", line 349, in load_app
+    app = locate_app(import_name, name)
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\cli.py", line 262, in locate_app
+    return find_best_app(module)
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\cli.py", line 72, in find_best_app
+    app = app_factory()
+  File "C:\Users\Kevin\Documents\GitHub\jhu_software_concepts\module_1\rp_flask_board\board\__init__.py", line 8, in create_app
+    app.register_blueprint(pages.bp)
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\sansio\scaffold.py", line 47, in wrapper_func
+    return f(self, *args, **kwargs)
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\sansio\app.py", line 595, in register_blueprint
+    blueprint.register(self, options)
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\sansio\blueprints.py", line 335, in register
+    deferred(state)
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\sansio\blueprints.py", line 434, in <lambda>
+    lambda s: s.add_url_rule(
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\sansio\blueprints.py", line 110, in add_url_rule
+    self.app.add_url_rule(
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\sansio\scaffold.py", line 47, in wrapper_func
+    return f(self, *args, **kwargs)
+  File "C:\Users\Kevin\venv\lib\site-packages\flask\sansio\app.py", line 657, in add_url_rule
+    raise AssertionError(
+AssertionError: View function mapping is overwriting an existing endpoint function: pages.about
+ * Debugger is active!
+ * Debugger PIN: 536-476-369
+ * Detected change in 'C:\\Users\\Kevin\\Documents\\GitHub\\jhu_software_concepts\\module_1\\rp_flask_board\\board\\pages.py', reloading
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 790-253-965
+(venv) PS C:\Users\Kevin\Documents\Github\jhu_software_concepts\module_1\rp_flask_board> python -m flask --app board run --port 8000 --debug
+ * Serving Flask app 'board'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:8000
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 790-253-965
+127.0.0.1 - - [25/Aug/2025 20:40:27] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 20:40:28] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 20:40:30] "GET /contact HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 20:40:30] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 20:40:32] "GET /projects HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 20:40:32] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 20:42:05] "GET /projects HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 20:42:06] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 20:42:08] "GET /projects HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 20:42:08] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 20:42:10] "GET /projects HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 20:42:10] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 20:42:12] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 20:42:12] "GET /static/styles.css HTTP/1.1" 304 -
+(venv) PS C:\Users\Kevin\Documents\Github\jhu_software_concepts\module_1\rp_flask_board> python -m flask --app board run --port 8000 --debug
+ * Serving Flask app 'board'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:8000
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 790-253-965
+127.0.0.1 - - [25/Aug/2025 20:44:14] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 20:44:15] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 20:44:16] "GET /projects HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 20:44:17] "GET /static/styles.css HTTP/1.1" 304 -
+(venv) PS C:\Users\Kevin\Documents\Github\jhu_software_concepts\module_1\rp_flask_board> python -m flask --app board run --port 8000 --debug
+ * Serving Flask app 'board'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:8000
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 790-253-965
+127.0.0.1 - - [25/Aug/2025 20:45:20] "GET /projects HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 20:45:21] "GET /static/styles.css HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 20:45:24] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 20:45:24] "GET /static/styles.css HTTP/1.1" 304 -
+(venv) PS C:\Users\Kevin\Documents\Github\jhu_software_concepts\module_1\rp_flask_board> python -m flask --app board run --port 8000 --debug
+ * Serving Flask app 'board'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:8000
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 790-253-965
+127.0.0.1 - - [25/Aug/2025 20:54:10] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 20:54:10] "GET /static/styles.css HTTP/1.1" 304 -
+(venv) PS C:\Users\Kevin\Documents\Github\jhu_software_concepts\module_1\rp_flask_board> python -m flask --app board run --port 8000 --debug
+ * Serving Flask app 'board'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:8000
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 790-253-965
+127.0.0.1 - - [25/Aug/2025 20:58:18] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 20:58:24] "GET /projects HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 20:58:26] "GET /contact HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 20:58:27] "GET /about HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 20:58:28] "GET / HTTP/1.1" 200 -
+(venv) PS C:\Users\Kevin\Documents\Github\jhu_software_concepts\module_1\rp_flask_board> python -m flask --app board run --port 8000 --debug
+ * Serving Flask app 'board'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:8000
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 790-253-965
+127.0.0.1 - - [25/Aug/2025 21:00:37] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 21:00:47] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 21:00:48] "GET /about HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 21:00:49] "GET /contact HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 21:00:51] "GET /projects HTTP/1.1" 200 -
+(venv) PS C:\Users\Kevin\Documents\Github\jhu_software_concepts\module_1\rp_flask_board> python -m flask --app board run --port 8000 --debug
+ * Serving Flask app 'board'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:8000
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 790-253-965
+127.0.0.1 - - [25/Aug/2025 21:02:18] "GET /projects HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 21:02:24] "GET / HTTP/1.1" 200 -
+(venv) PS C:\Users\Kevin\Documents\Github\jhu_software_concepts\module_1\rp_flask_board> python -m flask --app board run --port 8000 --debug
+ * Serving Flask app 'board'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:8000
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 790-253-965
+127.0.0.1 - - [25/Aug/2025 21:03:30] "GET / HTTP/1.1" 200 -
+(venv) PS C:\Users\Kevin\Documents\Github\jhu_software_concepts\module_1\rp_flask_board> python -m flask --app board run --port 8000 --debug
+ * Serving Flask app 'board'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:8000
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 790-253-965
+127.0.0.1 - - [25/Aug/2025 21:04:46] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 21:04:52] "GET /about HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 21:04:54] "GET /contact HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 21:04:54] "GET /about HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 21:04:56] "GET / HTTP/1.1" 200 -
+(venv) PS C:\Users\Kevin\Documents\Github\jhu_software_concepts\module_1\rp_flask_board> python -m flask --app board run --port 8000 --debug
+ * Serving Flask app 'board'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:8000
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 790-253-965
+127.0.0.1 - - [25/Aug/2025 21:05:31] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 21:05:34] "GET / HTTP/1.1" 200 -
+(venv) PS C:\Users\Kevin\Documents\Github\jhu_software_concepts\module_1\rp_flask_board> python -m flask --app board run --port 8000 --debug
+ * Serving Flask app 'board'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:8000
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 790-253-965
+127.0.0.1 - - [25/Aug/2025 21:09:05] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 21:09:06] "GET /static/styles.css HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 21:09:09] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 21:09:09] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 21:09:37] "GET /projects HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 21:09:37] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 21:09:38] "GET /contact HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 21:09:38] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 21:09:39] "GET /about HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 21:09:40] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 21:09:40] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 21:09:41] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 21:09:53] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 21:09:53] "GET /static/styles.css HTTP/1.1" 304 -
+(venv) PS C:\Users\Kevin\Documents\Github\jhu_software_concepts\module_1\rp_flask_board> python -m flask --app board run --port 8000 --debug
+ * Serving Flask app 'board'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:8000
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 790-253-965
+127.0.0.1 - - [25/Aug/2025 21:10:55] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 21:10:55] "GET /static/styles.css HTTP/1.1" 304 -
+(venv) PS C:\Users\Kevin\Documents\Github\jhu_software_concepts\module_1\rp_flask_board> python -m flask --app board run --port 8000 --debug
+ * Serving Flask app 'board'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:8000
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 790-253-965
+127.0.0.1 - - [25/Aug/2025 21:11:56] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 21:11:56] "GET /static/styles.css HTTP/1.1" 304 -
+(venv) PS C:\Users\Kevin\Documents\Github\jhu_software_concepts\module_1\rp_flask_board> python -m flask --app board run --port 8000 --debug
+ * Serving Flask app 'board'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:8000
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 790-253-965
+127.0.0.1 - - [25/Aug/2025 21:18:20] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 21:18:20] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 21:18:27] "GET /contact HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 21:18:28] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 21:18:29] "GET /projects HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 21:18:29] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 21:18:34] "GET /projects HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 21:18:34] "GET /static/styles.css HTTP/1.1" 304 -
+(venv) PS C:\Users\Kevin\Documents\Github\jhu_software_concepts\module_1\rp_flask_board> python -m flask --app board run --port 8000 --debug
+ * Serving Flask app 'board'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:8000
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 790-253-965
+127.0.0.1 - - [25/Aug/2025 21:20:35] "GET /projects HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 21:20:35] "GET /static/styles.css HTTP/1.1" 304 -
+(venv) PS C:\Users\Kevin\Documents\Github\jhu_software_concepts\module_1\rp_flask_board> python -m flask --app board run --port 8000 --debug
+ * Serving Flask app 'board'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:8000
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 790-253-965
+127.0.0.1 - - [25/Aug/2025 21:28:57] "GET /projects HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 21:28:57] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 21:29:00] "GET /contact HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 21:29:01] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 21:29:04] "GET /projects HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 21:29:04] "GET /static/styles.css HTTP/1.1" 304 -
+(venv) PS C:\Users\Kevin\Documents\Github\jhu_software_concepts\module_1\rp_flask_board> python -m flask --app board run --port 8000 --debug
+ * Serving Flask app 'board'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:8000
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 790-253-965
+127.0.0.1 - - [25/Aug/2025 21:30:56] "GET /projects HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 21:30:57] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 21:30:59] "GET /contact HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 21:31:00] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 21:32:53] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 21:32:54] "GET /static/styles.css HTTP/1.1" 304 -
+(venv) PS C:\Users\Kevin\Documents\Github\jhu_software_concepts\module_1\rp_flask_board> python -m flask --app board run --port 8000 --debug
+ * Serving Flask app 'board'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:8000
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 790-253-965
+127.0.0.1 - - [25/Aug/2025 21:41:12] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 21:41:12] "GET /static/styles.css HTTP/1.1" 304 -
+(venv) PS C:\Users\Kevin\Documents\Github\jhu_software_concepts\module_1\rp_flask_board> python -m flask --app board run --port 8000 --debug
+ * Serving Flask app 'board'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:8000
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 790-253-965
+127.0.0.1 - - [25/Aug/2025 21:41:34] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 21:41:35] "GET /static/styles.css HTTP/1.1" 304 -
+(venv) PS C:\Users\Kevin\Documents\Github\jhu_software_concepts\module_1\rp_flask_board> python -m flask --app board run --port 8000 --debug
+ * Serving Flask app 'board'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:8000
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 790-253-965
+127.0.0.1 - - [25/Aug/2025 21:43:17] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 21:43:18] "GET /static/styles.css HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 21:46:01] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 21:46:01] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 21:46:30] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 21:46:31] "GET /static/styles.css HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 21:47:31] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 21:47:31] "GET /static/styles.css HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 21:48:56] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 21:48:56] "GET /static/styles.css HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 21:48:59] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 21:48:59] "GET /static/styles.css HTTP/1.1" 304 -
+(venv) PS C:\Users\Kevin\Documents\Github\jhu_software_concepts\module_1\rp_flask_board> python -m flask --app board run --port 8000 --debug
+ * Serving Flask app 'board'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:8000
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 790-253-965
+127.0.0.1 - - [25/Aug/2025 21:52:23] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 21:53:12] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 21:53:13] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 21:53:44] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 21:53:44] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 21:53:47] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 21:53:47] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 21:55:56] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 21:55:57] "GET /static/styles.css HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:01:26] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:01:26] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 22:01:27] "GET /about HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:01:27] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 22:01:30] "GET /contact HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:01:30] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 22:01:36] "GET /projects HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:01:37] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 22:01:41] "GET /contact HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:01:41] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 22:03:19] "GET /contact HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:03:19] "GET /static/styles.css HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:04:04] "GET /contact HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:04:05] "GET /static/styles.css HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:04:08] "GET /contact HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:04:08] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 22:04:12] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:04:12] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 22:06:50] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:06:50] "GET /static/styles.css HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:10:07] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:10:08] "GET /static/styles.css HTTP/1.1" 200 -
+(venv) PS C:\Users\Kevin\Documents\Github\jhu_software_concepts\module_1\rp_flask_board> python -m flask --app board run --port 8000 --debug
+ * Serving Flask app 'board'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:8000
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 790-253-965
+127.0.0.1 - - [25/Aug/2025 22:10:18] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:10:19] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 22:10:41] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:10:41] "GET /static/styles.css HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:13:43] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:13:44] "GET /static/styles.css HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:15:16] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:15:16] "GET /static/styles.css HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:16:08] "GET /contact HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:16:09] "GET /static/styles.css HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:16:10] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:16:10] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 22:21:12] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:21:12] "GET /static/styles.css HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:22:43] "GET /about HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:22:44] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 22:22:45] "GET /contact HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:22:46] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 22:22:48] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:22:48] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 22:24:10] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:24:10] "GET /static/styles.css HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:24:13] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:24:13] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 22:24:14] "GET /about HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:24:14] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 22:24:15] "GET /contact HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:24:16] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 22:24:17] "GET /projects HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:24:17] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 22:25:40] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:25:40] "GET /static/styles.css HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:25:43] "GET /about HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:25:44] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 22:25:46] "GET /contact HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:25:46] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 22:25:47] "GET /projects HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:25:47] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 22:25:48] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:25:49] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 22:26:32] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:26:33] "GET /static/styles.css HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:26:35] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:26:35] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 22:26:37] "GET /about HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:26:38] "GET /static/styles.css HTTP/1.1" 304 -
+(venv) PS C:\Users\Kevin\Documents\Github\jhu_software_concepts\module_1\rp_flask_board> python -m flask --app board run --port 8000 --debug
+ * Serving Flask app 'board'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:8000
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 790-253-965
+127.0.0.1 - - [25/Aug/2025 22:26:52] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:26:52] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 22:26:54] "GET /about HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:26:55] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 22:28:19] "GET /about HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:28:20] "GET /static/styles.css HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:28:21] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:28:21] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 22:28:23] "GET /about HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:28:23] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 22:28:27] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:28:28] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 22:29:19] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:29:20] "GET /static/styles.css HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:29:22] "GET /about HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:29:22] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 22:29:24] "GET /contact HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:29:24] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 22:29:25] "GET /projects HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:29:25] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 22:29:26] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:29:26] "GET /static/styles.css HTTP/1.1" 304 -
+(venv) PS C:\Users\Kevin\Documents\Github\jhu_software_concepts\module_1\rp_flask_board> python -m flask --app board run --port 8000 --debug
+ * Serving Flask app 'board'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:8000
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 790-253-965
+127.0.0.1 - - [25/Aug/2025 22:29:37] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:29:38] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 22:29:39] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:29:40] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 22:37:04] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:37:04] "GET /static/styles.css HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:37:06] "GET /about HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:37:07] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 22:37:08] "GET /contact HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:37:08] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 22:37:09] "GET /projects HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:37:09] "GET /static/styles.css HTTP/1.1" 304 -
+127.0.0.1 - - [25/Aug/2025 22:37:10] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:37:10] "GET /static/styles.css HTTP/1.1" 304 -
+(venv) PS C:\Users\Kevin\Documents\Github\jhu_software_concepts\module_1\rp_flask_board> python -m flask --app board run --port 8080 --debug
+ * Serving Flask app 'board'
+ * Debug mode: on
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:8080
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 790-253-965
+127.0.0.1 - - [25/Aug/2025 22:37:50] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:37:50] "GET /static/styles.css HTTP/1.1" 200 -
+127.0.0.1 - - [25/Aug/2025 22:37:50] "GET /favicon.ico HTTP/1.1" 404 -

@@ -1,8 +1,16 @@
-<nav>
-    <ul>
-      <li><a href="{{ url_for('pages.home') }}">Home</a></li>
-      <li><a href="{{ url_for('pages.about') }}">About</a></li>
-      <li><a href="{{ url_for('pages.contact') }}">Contact Information</a></li>
-      <li><a href="{{ url_for('pages.projects') }}">Project Information</a></li>
-    </ul>
-  </nav>
+<nav class="site-nav">
+  <ul class="nav-links">
+    <li class="{% if request.path == url_for('pages.home') %}active{% endif %}">
+      <a href="{{ url_for('pages.home') }}">Home</a>
+    </li>
+    <li class="{% if request.path == url_for('pages.about') %}active{% endif %}">
+      <a href="{{ url_for('pages.about') }}">About</a>
+    </li>
+    <li class="{% if request.path == url_for('pages.contact') %}active{% endif %}">
+      <a href="{{ url_for('pages.contact') }}">Contact</a>
+    </li>
+    <li class="{% if request.path == url_for('pages.projects') %}active{% endif %}">
+      <a href="{{ url_for('pages.projects') }}">Publications</a>
+    </li>
+  </ul>
+</nav>
