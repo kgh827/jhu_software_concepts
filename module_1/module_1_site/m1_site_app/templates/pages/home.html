@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
-
+<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 {% block header %}
-  <h1>Kevin G. Householder</h1>
+
+  <h1 class="header-name">Kevin G. Householder (he/him/his)</h1>
 
   <h3>{% block title %}System Studies Engineer III at Mitsubishi Electric Power Products, Inc.{% endblock title %}</h3>
 {% endblock header %}
