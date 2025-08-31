@@ -8,11 +8,12 @@
     src: url('../fonts/ATARCS__.TTF');
   }
 
+  /*Nav bar alignment and color setup*/
   nav {
     text-align: right;
-    background: #1e73be;
   }
 
+  /*site body font type, size, margin, alignment and other text effect setups*/
   body {
     font-family: "atari3",monospace;
     font-size: 20px;
@@ -24,6 +25,7 @@
     border: 1px none rgba(65,255,0,0.9);
   }
   
+  /*link default and action color setups (i.e. visited, hover*/
   a,
   a:visited {
     color:#0056b3;
@@ -32,17 +34,14 @@
   a:hover {
     color:#ff0011;
   }
-  
-  .header-name{
-    background-color: #000000;
-  }
 
+  /*Navigation bar color and border padding*/
   .site-nav {
     background-color: #35ea2f;
     padding: 12px 16px;
   }
 
-
+/*setup for the nav bar link list*/
 .nav-links {
   list-style: none;
   margin: 0;
@@ -53,6 +52,7 @@
 
 }
 
+/*nav bar link list font, removed underline in text, text color, button border padding, background color, and smooth transition on click action*/
 .nav-links li a {
   font-family: "atari3",monospace;
   text-decoration: none;
@@ -63,23 +63,26 @@
   transition: background 0.1s ease, transform 0.1s ease-in-out;
 }
 
+/*Color upon hovering over nav bar buttons*/
 .nav-links li a:hover {
   background: rgba(176, 189, 178, 0.664);
 }
 
+/*Button pressing animation for fun*/
 .nav-links li a:active {
   transform: translateY(1px);
 }
 
+/*color for the button of the active page*/
 .nav-links li.active a,
 .nav-links li.active a:hover,
 .nav-links li.active a:active {
   font-family: "atari3",monospace;
   background: #494a4c; 
-
   color: #35ea2f;
 }
   
+/*splitting the body of the home page to add the image*/
 .split {
   display: flex;
   align-items: top;       
@@ -87,9 +90,11 @@
   min-height: 300px;
 }
 
+/*Setting parameters of the split home page*/
 .split-left  { flex: 1 1 60%; }
 .split-right { flex: 1 1 40%; display: flex; justify-content: flex-end; }
 
+/*Setting parameters of the image*/
 .split-img {
   width: 100%;
   max-width: 500px;          
@@ -98,6 +103,7 @@
   object-fit: cover;        
 }
 
+/*Setting width of content on main page*/
   main {
     width: 96%;
     margin: 0 auto;

@@ -1,18 +1,23 @@
+<!--base website html declaration and language setup (english)-->
+<!--this is the main template the rest of the website follows-->
 <!DOCTYPE html>
 <html lang="en">
+    <!--Link to the style sheet -->
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <head>
-
+        <!--including the navigation bar in the template-->
         {% include("_navigation.html") %}
     </head>
 <body>
 
 <section>
   <header>
+    <!--general header setup-->
     {% block header %}{% endblock header %}
   </header>
   <main>
-    {% block content %}<p>No messages.</p>{% endblock content %}
+    <!--general body setup-->
+    {% block content %}<p></p>{% endblock content %}
   </main>
 </section>
 </body>

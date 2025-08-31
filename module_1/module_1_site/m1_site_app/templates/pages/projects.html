@@ -1,12 +1,17 @@
+<!--This page is an extension of the base.html page that defines the structure of each page using the Python flask module.-->
 {% extends 'base.html' %}
 
 {% block header %}
+  <!--Header for "project information"-->
   <h2>{% block title %}Project Information{% endblock title %}</h2>
 {% endblock header %}
 
 {% block content %}
+  <!--header-->
   <h1>Module 1 Project Title: Module 1 Website</h1>
+  <!--div where i discuss what my website consists of-->
   <div>My module #1 project consists of a website (with a few pages) that provides a bio of my work, my contact information as well as information about the module 1 project.  It is pretty cool, I hope you like it!</div>
   <p></p>
+  <!--a href link to go to my github repository for project 1-->
   <a href="https://github.com/kgh827/jhu_software_concepts/tree/main/module_1">Click on me to travel to the source code for Assignment #1 on Github</a>
 {% endblock content %}

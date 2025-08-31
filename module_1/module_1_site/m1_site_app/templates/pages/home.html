@@ -1,13 +1,17 @@
+<!--This page is an extension of the base.html page that defines the structure of each page using the Python flask module.-->
 {% extends 'base.html' %}
+<!--Link to the css style sheet-->
 <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 {% block header %}
-
+  <!--Header where i add my name and classify it as "header-name"-->
   <h1 class="header-name">Kevin G. Householder (he/him/his)</h1>
 
+  <!--header block where i show my job title-->
   <h3>{% block title %}System Studies Engineer III at Mitsubishi Electric Power Products, Inc.{% endblock title %}</h3>
 {% endblock header %}
 
 {% block content %}
+  <!--split div as discussed in the css comments.  left split is text, right split is image-->
   <div class="split">
     <div class = "split-left">
       <p>
