@@ -3,8 +3,8 @@
     <li class="{% if request.path == url_for('pages.home') %}active{% endif %}">
       <a href="{{ url_for('pages.home') }}">Home</a>
     </li>
-    <li class="{% if request.path == url_for('pages.about') %}active{% endif %}">
-      <a href="{{ url_for('pages.about') }}">About</a>
+    <li class="{% if request.path == url_for('pages.interests') %}active{% endif %}">
+      <a href="{{ url_for('pages.interests') }}">Interests</a>
     </li>
     <li class="{% if request.path == url_for('pages.contact') %}active{% endif %}">
       <a href="{{ url_for('pages.contact') }}">Contact</a>

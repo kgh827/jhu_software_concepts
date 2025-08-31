@@ -2,6 +2,7 @@
     box-sizing: border-box;
   }
 
+  /*The atari3 font below was from a website i made at a previous employer (CMU Cylab Biometrics Center)*/
   @font-face {
     font-family: atari3;
     src: url('../fonts/ATARCS__.TTF');
@@ -13,7 +14,6 @@
   }
 
   body {
-    /*font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;*/
     font-family: "atari3",monospace;
     font-size: 20px;
     margin: 5px;
