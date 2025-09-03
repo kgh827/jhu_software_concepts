@@ -32,18 +32,157 @@ url = "https://www.thegradcafe.com/survey/" #Initial start page for pulling
 
 response = http.request("GET", url)
 
-if response.status == 200: #IF response code 200 is detected
-    soup = BeautifulSoup(response.data, "html.parser")
-    results = soup.find("table")
-    data_rows = results.find_all("tr")
-    data_row_cards = [tr for tr in data_rows]
+soup = BeautifulSoup(response.data, "html.parser")  #instantiate beautifulsoup html parser
+results = soup.find("table")                        #using beautifulsoup to find the first table in the document
+data_rows = results.find_all("tr")                  #using beautifulsoup to find <tr> table rows which is where the relevant data is  
+data_row_list = []                                  #list of all table rows appended together for this page
+for tr in data_rows:
+    data_row_list.append(tr)
 
-    #categories = ['School','']
+#Categories of data to be extracted from the site
+#for the URL, it is when you click on the little '...' thing on the right
+#some of these need to be handled differently depending on their "depth" in the html tags
+r1_categories = ['university','program_name','degree_title','date_added','applicant_status','decision_date','applicant_URL']
+r2_categories = ['semester','student_location','GRE','GRE V','GRE AW','GPA']
+r3_categories = ['notes']
 
-    for data_row in data_row_cards:
-        cells = data_row.find_all(["td", "th"])
-        if not cells:
-            continue  # skip empty rows
-        print(" | ".join(cell.get_text(strip=True) for cell in cells))
-else:
-    print('There was an issue with the url entered.')
+
+#Blank dictionary to populate for each applicant.  Each row is initially defined as default empty in case data is missing
+applicant_dictionary = {
+    "r1": {key:"" for key in r1_categories},
+    "r2": {key:"" for key in r2_categories},
+    "r3": {key:"" for key in r3_categories}
+}
+
+row_check = 0   #this variable acts as a reference to tell how many data rows there are when parsing through
+
+for data_row in data_row_list:
+
+    has_header = data_row.find("th") is not None    #identifies list of header cells
+    has_data   = data_row.find("td") is not None    #identifies list of data cells 
+    if has_header or not has_data:                  #if the row is a header, or if it doesn't have data, skip to the next row/loop iteration                
+        continue   
+
+    row_classes = data_row.get("class") or []       #this grabs the <tr> classes (or not) which allows to identify 2nd, 3rd rows
+
+    data_entries = []                               #empty list to populate with data rows
+
+    for td in data_row.find_all("td"):                  #loop through the data cells 
+        sub_items = td.find_all(["span", "div"])        # If the data cell has multiple child spans/divs, extract each one separately
+        if sub_items:
+            for sub in sub_items:                       # iterates through the sub items to extract additional data
+                text = sub.get_text(" ", strip=True)    #splits text entries based on the "  " whitespace
+
+                if text:                                # further split if multiple fields are jammed together
+                    parts = text.split("  ")            #splits text entries based on the "  " whitespace
+                    for part in parts:              
+                        if part.strip():                        #strips whitespace from text
+                            data_entries.append(part.strip())
+        else:                                                   #this else is for when there is no additional span with nested data
+            text = td.get_text(" ", strip=True)                 #splits text entries based on the "  " whitespace
+            if text:
+                parts = text.split("  ")                        #splits text entries based on the "  " whitespace
+                for part in parts:
+                    if part.strip():                            #strips whitespace from text
+                        data_entries.append(part.strip())
+
+    if "tw-border-none" not in row_classes:                     # Row 1 of data has no class (haha), Row 2 and 3 have 'tw-border-none'
+                                                                # break row 1 entries into variables
+        tds = data_row.find_all("td")                           #find all data cells for this row of data
+
+        university = tds[0].get_text(" ", strip=True) if len(tds) > 0 else ""      #set up and extract "University" variable, default to "" if issues found
+
+        # program name and degree title are usually nested/grouped together, need to split them up
+        program_name = ""
+        degree_title = ""
+        if len(tds) > 1:
+            spans = tds[1].find_all("span")                         #find span where progrm name and degree title are located
+            if len(spans) >= 1:                                     # if the span contains more than 0 entries, use it as program name
+                program_name = spans[0].get_text(" ", strip=True)   # strip whitespace and store program_name
+            if len(spans) >= 2:                                     #if span contains more than 1 entry, use this as degree_title
+                degree_title = spans[1].get_text(" ", strip=True)   #strip whitespace and store degree_title
+
+        # Date added to site
+        date_added = tds[2].get_text(" ", strip=True) if len(tds) > 2 else ""   #set up and extract date_added variable, default to "" if issues
+
+        # Split up applicant status and decision date
+        applicant_status = ""
+        decision_date = ""
+
+        if len(tds) > 3:                                                            #checking to make sure there is still additional data to scrape
+            decision_text = tds[3].get_text(" ", strip=True)                        #set up and extract decision variable
+
+            bad_data = ["Total comments", "Open options", "See More", "Report"]     #set this up to eliminate "bad data" aka unnecessary text
+            for item in bad_data:
+                decision_text = decision_text.replace(item, "").strip()             #replaces the bad data item with "" --> replaces with nothing
+
+            if " on " in decision_text:                                             #checking to see if data is formatted how we want (contains "on")
+                parts = decision_text.split(" on ", 1)                              #Using the word "on", split the text into status/decision date
+                applicant_status = parts[0].strip()                                 #scrape/extract applicant_status
+                decision_date = parts[1].strip()                                    #scrape/extract decision_date
+            else:
+                applicant_status = decision_text.strip()                            #default to full data cell
+
+        url_tag = data_row.find("a", href=True, attrs={"data-ext-page-id": True})   #searches for the applicant link in the by using several identifiers
+        applicant_URL = url_tag["href"].split("#")[0] if url_tag else ""            #strips the #insticator-commenting and saves "applicant_URL" as the 0 element of the split pair
+
+        print("Row 1 Data:")
+        print("  University:", university)
+        print("  Program_Name:", program_name)
+        print("  Degree_Title:", degree_title)
+        print("  Date_Added:", date_added)
+        print("  Applicant_Status:", applicant_status)
+        print("  Decision_Date:", decision_date)
+        print("  URL:", applicant_URL)
+
+        row_check = 1
+
+    elif row_check == 1:
+        #if there is a row 2, break row 2 entries into variables
+        semester = ""
+        student_location = ""
+        GRE = ""
+        GRE_V = ""
+        GRE_AW = ""
+        GPA = ""
+
+        if data_row.find("td"):                                 #checks to see if there is any data cells in row 2
+            row2_td = data_row.find("td")                       #extracts the data cells for row 2
+
+            row2_parts = []                                     #empty list for row 2 data
+            for part in row2_td.find_all(["span", "div"]):      #searching for span or div elements that may contain additional data
+                
+                text_val = part.get_text(" ", strip=True)       #extracts text and eliminates white space
+                if text_val:                                    # if data is stored in text_val, it gets appended t "row2_parts"
+                    row2_parts.append(text_val)
+
+            for part in row2_parts:                                                                     # iterates through row2_parts to determine/match up data
+                if part.startswith("Fall") or part.startswith("Spring") or part.startswith("Summer"):   #determines semester based on possible options
+                    semester = part
+                elif "International" in part or "American" in part:                                     #determines student location based on possible options
+                    student_location = part
+                elif part.startswith("GRE "):                                                           #use "GRE" as main identifier
+                    if part.startswith("GRE V"):                                                        #check "GRE V" as identifier
+                        GRE_V = part.replace("GRE V", "").strip()                                       #save GRE_V variable if present
+                    elif part.startswith("GRE AW"):                                                     #check "GRE AW" as identifier
+                        GRE_AW = part.replace("GRE AW", "").strip()                                     #save GRE_AW variable if present
+                    else:                                                                               #otherwise
+                        GRE = part.replace("GRE", "").strip()                                           #save GRE variable
+                elif part.startswith("GPA"):                                                            #check "GPA" as identifier
+                    GPA = part.replace("GPA", "").strip()                                               # if present, save as GPA
+
+        print("ROW 2:")
+        print("  Semester:", semester)
+        print("  Student_Location:", student_location)
+        print("  GRE:", GRE)
+        print("  GRE V:", GRE_V)
+        print("  GRE AW:", GRE_AW)
+        print("  GPA:", GPA)
+        row_check = 2
+
+    elif row_check == 2:
+        #If there is a row 3, break row 3 into the notes section
+        notes = data_entries[0] if len(data_entries) > 0 else ""    #basically row 3 only has notes if it is there (from what i have seen)
+        print("ROW 3:")
+        print("  Notes:", notes)
+        row_check = 0  # reset after finishing a listing
