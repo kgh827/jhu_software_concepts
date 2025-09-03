@@ -25,6 +25,9 @@ else:
 
 import urllib3
 from bs4 import BeautifulSoup
+import json
+
+all_applicants = [] #this will eventually hold all of the applicant dictionaries to be sent to json
 
 http = urllib3.PoolManager()  #set up a 'http pool manager' to make requests
 
@@ -46,13 +49,6 @@ r1_categories = ['university','program_name','degree_title','date_added','applic
 r2_categories = ['semester','student_location','GRE','GRE V','GRE AW','GPA']
 r3_categories = ['notes']
 
-
-#Blank dictionary to populate for each applicant.  Each row is initially defined as default empty in case data is missing
-applicant_dictionary = {
-    "r1": {key:"" for key in r1_categories},
-    "r2": {key:"" for key in r2_categories},
-    "r3": {key:"" for key in r3_categories}
-}
 
 row_check = 0   #this variable acts as a reference to tell how many data rows there are when parsing through
 
@@ -86,13 +82,44 @@ for data_row in data_row_list:
                     if part.strip():                            #strips whitespace from text
                         data_entries.append(part.strip())
 
+    # row one data entry default values
+    university = program_name = degree_title = date_added = ""
+    applicant_status = decision_date = applicant_URL = ""
+
+    #row two data entry default values
+    semester = student_location = GRE = GRE_V = GRE_AW = GPA = ""
+
+    #row three data entry default values
+    notes = ""
+
     if "tw-border-none" not in row_classes:                     # Row 1 of data has no class (haha), Row 2 and 3 have 'tw-border-none'
-                                                                # break row 1 entries into variables
-        tds = data_row.find_all("td")                           #find all data cells for this row of data
+        
+        #Blank dictionary to populate for each applicant.  Each row is initially defined as default empty in case data is missing
+        applicant_dictionary = {
+            # Row 1 data
+            "university": "",
+            "program_name": "",
+            "degree_title": "",
+            "date_added": "",
+            "applicant_status": "",
+            "decision_date": "",
+            "applicant_URL": "",
+            # Row 2 data
+            "semester": "",
+            "student_location": "",
+            "GRE": "",
+            "GRE V": "",
+            "GRE AW": "",
+            "GPA": "",
+            # Row 3 data
+            "notes": ""
+        }  
+        
+        tds = data_row.find_all("td")                                                                       #find all data cells for this row of data
 
-        university = tds[0].get_text(" ", strip=True) if len(tds) > 0 else ""      #set up and extract "University" variable, default to "" if issues found
+        applicant_dictionary['university'] = tds[0].get_text(" ", strip=True) if len(tds) > 0 else ""      #add university to applicant_dictionary
 
-        # program name and degree title are usually nested/grouped together, need to split them up
+        #program name and degree title are usually nested/grouped together, need to split them up
         program_name = ""
         degree_title = ""
         if len(tds) > 1:
@@ -102,8 +129,11 @@ for data_row in data_row_list:
             if len(spans) >= 2:                                     #if span contains more than 1 entry, use this as degree_title
                 degree_title = spans[1].get_text(" ", strip=True)   #strip whitespace and store degree_title
 
+        applicant_dictionary['program_name'] = program_name         #add program_name to applicant_dictionary
+        applicant_dictionary['degree_title'] = degree_title         #add degree_title to applicant_dictionary
+
         # Date added to site
-        date_added = tds[2].get_text(" ", strip=True) if len(tds) > 2 else ""   #set up and extract date_added variable, default to "" if issues
+        applicant_dictionary['date_added'] = tds[2].get_text(" ", strip=True) if len(tds) > 2 else ""   #add date_added to applicant_dictionary
 
         # Split up applicant status and decision date
         applicant_status = ""
@@ -123,8 +153,11 @@ for data_row in data_row_list:
             else:
                 applicant_status = decision_text.strip()                            #default to full data cell
 
-        url_tag = data_row.find("a", href=True, attrs={"data-ext-page-id": True})   #searches for the applicant link in the by using several identifiers
-        applicant_URL = url_tag["href"].split("#")[0] if url_tag else ""            #strips the #insticator-commenting and saves "applicant_URL" as the 0 element of the split pair
+        applicant_dictionary['applicant_status'] = applicant_status                 #add applicant_status to applicant_dictionary
+        applicant_dictionary['decision_date'] = decision_date                       #add decision_date to applicant_dictionary
+        
+        url_tag = data_row.find("a", href=True, attrs={"data-ext-page-id": True})                           #searches for the applicant link in the by using several identifiers
+        applicant_dictionary['applicant_URL'] = url_tag["href"].split("#")[0] if url_tag else ""            #add applicant_url to applicant_dictionary
 
         print("Row 1 Data:")
         print("  University:", university)
@@ -158,31 +191,51 @@ for data_row in data_row_list:
 
             for part in row2_parts:                                                                     # iterates through row2_parts to determine/match up data
                 if part.startswith("Fall") or part.startswith("Spring") or part.startswith("Summer"):   #determines semester based on possible options
+                    applicant_dictionary['semester'] = part                                             #add semester to applicant_dictionary
                     semester = part
                 elif "International" in part or "American" in part:                                     #determines student location based on possible options
+                    applicant_dictionary['student_location'] = part                                     #add student_location to applicant_dictionary
                     student_location = part
                 elif part.startswith("GRE "):                                                           #use "GRE" as main identifier
                     if part.startswith("GRE V"):                                                        #check "GRE V" as identifier
-                        GRE_V = part.replace("GRE V", "").strip()                                       #save GRE_V variable if present
+                        applicant_dictionary['GRE_V'] = part.replace("GRE V", "").strip()               #add GRE_V to applicant_dictionary
+                        GRE_V = part.replace("GRE V", "").strip()
                     elif part.startswith("GRE AW"):                                                     #check "GRE AW" as identifier
-                        GRE_AW = part.replace("GRE AW", "").strip()                                     #save GRE_AW variable if present
+                        applicant_dictionary['GRE_AW'] = part.replace("GRE AW", "").strip()             #add GRE_AW to applicant_dictionary
+                        GRE_AW = part.replace("GRE AW", "").strip()
                     else:                                                                               #otherwise
-                        GRE = part.replace("GRE", "").strip()                                           #save GRE variable
+                        applicant_dictionary['GRE'] = part.replace("GRE", "").strip()                   #add GRE to applicant_dictionary
+                        GRE = part.replace("GRE", "").strip() 
                 elif part.startswith("GPA"):                                                            #check "GPA" as identifier
-                    GPA = part.replace("GPA", "").strip()                                               # if present, save as GPA
+                    applicant_dictionary['GPA'] = part.replace("GPA", "").strip()                       #add GPA to applicant dictionary
+                    GPA = part.replace("GPA", "").strip()  
 
-        print("ROW 2:")
-        print("  Semester:", semester)
-        print("  Student_Location:", student_location)
-        print("  GRE:", GRE)
-        print("  GRE V:", GRE_V)
-        print("  GRE AW:", GRE_AW)
-        print("  GPA:", GPA)
-        row_check = 2
+            print("Row 2 Data:")
+            print("  Semester:", semester)
+            print("  Student Location:", student_location)
+            print("  GRE:", GRE)
+            print("  GRE V:", GRE_V)
+            print("  GRE AW:", GRE_AW)
+            print("  GPA:", GPA)
+
+            #looks forward to the next table row following the current one and grabs the next class
+            check_next_class = data_row.find_next_sibling("tr").get("class") or []    
+            if "tw-border-none" not in check_next_class:                                #if the next class does NOT contain the class pattern for row 2 and 3
+                all_applicants.append(applicant_dictionary)                             #if it is not, append this student data to the dictionary (because there is no row 3)
+                row_check = 0                                                           #reset the counter to 0 in order to start back to row 1 for the next student/iteration
+            else:
+                row_check = 2                                                           #otherwise move to row 3
+        
+        # row_check = 2
 
     elif row_check == 2:
         #If there is a row 3, break row 3 into the notes section
-        notes = data_entries[0] if len(data_entries) > 0 else ""    #basically row 3 only has notes if it is there (from what i have seen)
-        print("ROW 3:")
+        applicant_dictionary['notes'] = data_entries[0] if len(data_entries) > 0 else ""    #add notes to applicant dictionary
+        print("Row 3 data:")
         print("  Notes:", notes)
+        all_applicants.append(applicant_dictionary)
         row_check = 0  # reset after finishing a listing
+    
+
+with open("applicant_data.json", "w", encoding="utf-8") as f:   #open json file to be written to
+    json.dump(all_applicants, f, indent=4, ensure_ascii=False)  #write all student dictionaries to the json file
