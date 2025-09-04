@@ -9,11 +9,11 @@ http = urllib3.PoolManager()  #set up a 'http pool manager' to make requests
 url = "https://thegradcafe.com/robots.txt" #This is the url location of the robots.txt document for thegradcafe.com
 response = http.request("GET", url) #Setting up a GET request to pull the contents of the robots.txt file
 
-if response.status == 200: #IF response code 200 is detected (successful), print the robots.txt 
-    text_file_output = response.data  #data provided by the response
+if response.status == 200:                              #IF response code 200 is detected (successful), print the robots.txt 
+    text_file_output = response.data                    #data provided by the response
     text_file_output = text_file_output.decode("utf-8") #decode the file into a more readable format (utf-8 is plain text/.txt)
     print('Robots.txt file loaded successfully.')
-    #print(text_file_output) #print resulting text 
+    #print(text_file_output)                            #print resulting text 
 else:
     print('There was an issue with the url entered.')
 
@@ -103,6 +103,10 @@ while len(all_applicants) < max_applicants:
         notes = ""
 
         if "tw-border-none" not in row_classes:                     # Row 1 of data has no class (haha), Row 2 and 3 have 'tw-border-none'
+            
+            if row_check != 0:  # if row_check is greater than zero, append to dictionary
+                if applicant_dictionary["university"] or applicant_dictionary["program_name"]:  #used these bc these fields are almost always present/good indicator
+                    all_applicants.append(applicant_dictionary)
             
             #Blank dictionary to populate for each applicant.  Each row is initially defined as default empty in case data is missing
             applicant_dictionary = {
@@ -202,23 +206,17 @@ while len(all_applicants) < max_applicants:
                 for part in row2_parts:                                                                     # iterates through row2_parts to determine/match up data
                     if part.startswith("Fall") or part.startswith("Spring") or part.startswith("Summer"):   #determines semester based on possible options
                         applicant_dictionary['semester'] = part                                             #add semester to applicant_dictionary
-                        semester = part
                     elif "International" in part or "American" in part:                                     #determines student location based on possible options
                         applicant_dictionary['student_location'] = part                                     #add student_location to applicant_dictionary
-                        student_location = part
                     elif part.startswith("GRE "):                                                           #use "GRE" as main identifier
                         if part.startswith("GRE V"):                                                        #check "GRE V" as identifier
-                            applicant_dictionary['GRE_V'] = part.replace("GRE V", "").strip()               #add GRE_V to applicant_dictionary
-                            GRE_V = part.replace("GRE V", "").strip()
+                            applicant_dictionary['GRE V'] = part.replace("GRE V", "").strip()               #add GRE_V to applicant_dictionary
                         elif part.startswith("GRE AW"):                                                     #check "GRE AW" as identifier
-                            applicant_dictionary['GRE_AW'] = part.replace("GRE AW", "").strip()             #add GRE_AW to applicant_dictionary
-                            GRE_AW = part.replace("GRE AW", "").strip()
+                            applicant_dictionary['GRE AW'] = part.replace("GRE AW", "").strip()             #add GRE_AW to applicant_dictionary
                         else:                                                                               #otherwise
                             applicant_dictionary['GRE'] = part.replace("GRE", "").strip()                   #add GRE to applicant_dictionary
-                            GRE = part.replace("GRE", "").strip() 
                     elif part.startswith("GPA"):                                                            #check "GPA" as identifier
-                        applicant_dictionary['GPA'] = part.replace("GPA", "").strip()                       #add GPA to applicant dictionary
-                        GPA = part.replace("GPA", "").strip()  
+                        applicant_dictionary['GPA'] = part.replace("GPA", "").strip()                       #add GPA to applicant dictionary 
 
                 # print("Row 2 Data:")
                 # print("  Semester:", semester)
@@ -230,11 +228,12 @@ while len(all_applicants) < max_applicants:
 
                 #looks forward to the next table row following the current one and grabs the next class
                 check_next_class = data_row.find_next_sibling("tr").get("class") or []    
-                if "tw-border-none" not in check_next_class:                                #if the next class does NOT contain the class pattern for row 2 and 3
-                    all_applicants.append(applicant_dictionary)                             #if it is not, append this student data to the dictionary (because there is no row 3)
-                    row_check = 0                                                           #reset the counter to 0 in order to start back to row 1 for the next student/iteration
+                if "tw-border-none" not in check_next_class:                                        #if the next class does NOT contain the class pattern for row 2 and 3
+                    if applicant_dictionary["university"] or applicant_dictionary["program_name"]:  #used these bc these fields are almost always present/good indicator
+                        all_applicants.append(applicant_dictionary)                                 #if it is not and the row 1 data is present, append this student data to the dictionary (because there is no row 3)
+                    row_check = 0                                                                   #reset the counter to 0 in order to start back to row 1 for the next student/iteration
                 else:
-                    row_check = 2                                                           #otherwise move to row 3
+                    row_check = 2                                                                   #otherwise move to row 3
             
             # row_check = 2
 
@@ -243,10 +242,10 @@ while len(all_applicants) < max_applicants:
             applicant_dictionary['notes'] = data_entries[0] if len(data_entries) > 0 else ""    #add notes to applicant dictionary
             # print("Row 3 data:")
             # print("  Notes:", notes)
-            all_applicants.append(applicant_dictionary)
+            if applicant_dictionary["university"] or applicant_dictionary["program_name"]:      #used these bc these fields are almost always present/good indicator
+                all_applicants.append(applicant_dictionary)
             row_check = 0  # reset after finishing a listing
         
-
     with open("applicant_data_test.json", "w", encoding="utf-8") as f:   #open json file to be written to
         json.dump(all_applicants, f, indent=4, ensure_ascii=False)  #write all student dictionaries to the json file
     
