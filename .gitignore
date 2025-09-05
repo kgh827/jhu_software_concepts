@@ -1,2 +1,4 @@
 venv/
 **/venv/
+*.gguf
+module_2/llm_hosting/models/
