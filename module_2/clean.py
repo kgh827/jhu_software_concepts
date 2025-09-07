@@ -29,7 +29,7 @@ def clean_data(results):
 
 def save_data(cleaned):
     import json
-    filename = "applicant_data_filetest2.json"
+    filename = "applicant_data_CleanTest.json"
     with open(filename, "w", encoding="utf-8") as f:   #open json file to be written to
         json.dump(cleaned, f, indent=4, ensure_ascii=False)  #write all student dictionaries to the json file
     
