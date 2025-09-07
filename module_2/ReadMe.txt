@@ -6,7 +6,7 @@ The code is well commented so any other questions can likely be answered by my c
 
 2. Module 2: Web Scraping
    Assignment Name: Web Scraping
-   Due Date: September 9, 2025
+   Due Date: September 7, 2025
 
 3. Approach:
 ***********IMPORTANT: You must run the scrape.py file as it contains the "if __name__ == "__main__":" instantiation to allow the script to run.  I have "max_applicants" set to 50 so that it can demonstratably work if tested.
