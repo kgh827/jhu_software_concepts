@@ -8,17 +8,18 @@ from psycopg import connect
 from psycopg.rows import dict_row
 from dotenv import load_dotenv
 
-load_dotenv()   # Looks for .env file in the directory and pulls credentials from it
+# Load database credentials from .env file
+load_dotenv()
 
-# Pulls in the credential data from the .env file
+# DSN (Data Source Name) string constructed from environment variables
 DSN = (
     f"host={os.getenv('PGHOST')} port={os.getenv('PGPORT')} "
     f"dbname={os.getenv('PGDATABASE')} user={os.getenv('PGUSER')} "
     f"password={os.getenv('PGPASSWORD')}"
 )
 
-# Create filepath to the target data
-INPUT_JSON = os.path.join(os.path.dirname(__file__), "llm_extend_applicant_data.json")
+BASE_DIR = os.path.dirname(__file__)    # Path to the current working directory of this script
+LLM_JSON = os.path.join(BASE_DIR, "LLM_app_data_GRE_GPA.jsonl")     # Json of the new data set after being processed by the LLM (new data to be able to get GPA/GRE data)
 
 # Set up the columns based on assignment description
 COLUMNS: List[str] = [
@@ -31,7 +32,7 @@ COLUMNS: List[str] = [
     "term",
     "us_or_international",
     "gpa",
-    "gre",
+    "gre_q",
     "gre_v",
     "gre_aw",
     "degree",
@@ -40,9 +41,8 @@ COLUMNS: List[str] = [
 ]
 
 # Set up SQL for columns
-insert_cols = ", ".join(COLUMNS)                                                # Create comma separated list of column names from above
-placeholders = ", ".join(["%s"] * len(COLUMNS))                                 # Create comma separated list of %s data placeholders from above
-update_cols = ", ".join(f"{c}=EXCLUDED.{c}" for c in COLUMNS if c != "p_id")    # Creates a default list of .EXCLUDED entries if there is an error in inserting the data
+insert_cols = ", ".join(COLUMNS)                                                # Create comma separated list of column names
+placeholders = ", ".join(["%s"] * len(COLUMNS))                                 # Create placeholder %s characters for each corresponding column
 
 # Setting up the SQL table commands
 CREATE_TABLE_SQL = """
@@ -56,21 +56,20 @@ CREATE TABLE IF NOT EXISTS applicants (
   term TEXT,
   us_or_international TEXT,
   gpa DOUBLE PRECISION,
-  gre DOUBLE PRECISION,
+  gre_q DOUBLE PRECISION,
   gre_v DOUBLE PRECISION,
   gre_aw DOUBLE PRECISION,
-  degree DOUBLE PRECISION,
+  degree TEXT,
   llm_generated_program TEXT,
   llm_generated_university TEXT
 );
 """
 
-# Update and insert (upsert) 
-UPSERT_SQL = f"""
-INSERT INTO applicants ({insert_cols})  # Inserts a new row in the applicants table
-VALUES ({placeholders})                 # Value placeholders for each corresponding column
-ON CONFLICT (p_id) DO UPDATE SET        # If there is a conflict, update the columns
-  {update_cols};
+# Insert sql data based on data outlined above
+INSERT_SQL = f"""
+INSERT INTO applicants ({insert_cols})
+VALUES ({placeholders})
+ON CONFLICT (p_id) DO NOTHING;
 """
 
 def read_items(path):
@@ -87,9 +86,8 @@ def read_items(path):
             - JSON-lines (one JSON object per line) returns a list of parsed objects.
             - An empty file returns an empty list.
     """
-    
     raw = io.open(path, "r", encoding="utf-8-sig").read()   # Open and read the json file contents as a string; encoding = utf-8-sig avoids byte order marks
-    raw = raw.strip()   # Strip leading and ending whitespace
+    raw = raw.strip()                                       # Strip leading and ending whitespace
 
     if not raw:         # If raw data is empty, returns an empty list
         return []
@@ -97,59 +95,110 @@ def read_items(path):
         obj = json.loads(raw)
         return obj["items"] if isinstance(obj, dict) and "items" in obj else obj
     except json.JSONDecodeError:    # If reading json file as an object fails, use this as a fail safe to read data line by line
-        items=[]
+        items = []
         for line in raw.splitlines():
-            s=line.strip()          # Strip white space
+            s = line.strip()        # Strip white space
             if s:                   # If the cleaned string is non-empty, append it to the list
                 items.append(json.loads(s))
         return items
 
 def to_date(s):
+    if not s: 
+        return None     # Return nothing if s does not exist
+    s = str(s).strip()  # Strip whitepace
 
-    if not s: return None
-    s = str(s).strip()
-    for fmt in ("%Y-%m-%d","%m/%d/%Y","%d-%b-%Y","%b %d, %Y"):
-        try: return datetime.strptime(s, fmt).date()
-        except: pass
-    return None
+    # Standardize the month abbreviations to be consistent
+    month_map = {
+        "Jan": "January", "Feb": "February", "Mar": "March", "Apr": "April",
+        "Jun": "June", "Jul": "July", "Aug": "August", "Sep": "September",
+        "Sept": "September", "Oct": "October", "Nov": "November", "Dec": "December"
+    }
+
+    # Replace the abbreviations and eliminate any other "filler", meaning "-", "/" and ","
+    split_date = s.replace("-", " ").replace("/", " ").replace(",", " ").split()
+
+    new_date_parts = []                 # Empty list to store parts of the new date
+    for part in split_date:
+        part_Cap = part.capitalize()    # Capitalize the current part
+        if part_Cap in month_map:       # If the month is found
+            new_date_parts.append(month_map[part_Cap])  # Add to new_date_parts from "month_map" for standard month
+        else:
+            new_date_parts.append(part)                 # Otherwise add the year/day to new_date_parts 
+    s = " ".join(new_date_parts)
+
+    # Added a bunch of formats to try to catch any outliers
+    formats = [
+        "%Y-%m-%d",
+        "%m/%d/%Y",
+        "%d-%b-%Y",
+        "%b %d, %Y",
+        "%B %d, %Y",
+        "%d %B %Y",
+        "%B %d %Y",
+        "%d %B",
+        "%B %Y",
+    ]
+
+    # Checks each format above compared to the current date, if it matches any of them, it converts the match to a date object and returns it.
+    for fmt in formats:
+        try:
+            return datetime.strptime(s, fmt).date()
+        except:     # Ignore error if it occurs
+            pass
+    return None     # return nothing if it fails
 
 def to_float(x):
+    if x in (None, "", "NA", "N/A", "null"):
+        return None
+    try:
+        return float(x)
+    except ValueError:
+        return None
 
-    if x in (None,"","NA","N/A","null"): return None
-    m = re.search(r"-?\d+(\.\d+)?", str(x))
-    return float(m.group(0)) if m else None
+def clean_gpa(val):
+    g = to_float(val)
+    if g is None:
+        return None
+    return g if 0.0 <= g <= 4.0 else None
+
+def clean_gre(val, kind):
+    s = to_float(val)
+    if s is None:
+        return None                                 # if there if no score, ignore
+    if kind == "aw":
+        return s if 0.0 <= s <= 6.0 else None       # If the GRE analytical writing score is outside of the normal range, ignore
+    return s if 130 <= s <= 170 else None           # If the GRE quantative/verbal score is outside of the normal range, ignore
 
 def extract_data(item, idx):
-
     return (
-        int(item.get("p_id", idx)),                             # Primary key uses p_id unless it's missing, otherwise uses the loop index
-        item.get("program"),                                    # Extract program data
-        item.get("comments"),                                   # Extract comments/notes
-        to_date(item.get("date_added")),                        # Extract date added and convert it to a date object to be consistent
-        item.get("url"),                                        # Extract application url
-        item.get("status"),                                     # Extract Application status
-        item.get("term"),                                       # Extract semester/term data
-        item.get("US/International"),                           # Extract US/international data
-        to_float(item.get("gpa")),                              # Extract GPA and convert to float
-        to_float(item.get("gre") or item.get("gre_q") or item.get("gre_quant")),                #writes nothing for now, need to push other data to db
-        to_float(item.get("gre_v") or item.get("gre_verbal")),                                  #writes nothing for now, need to push other data to db
-        to_float(item.get("gre_aw") or item.get("gre_awriting") or item.get("gre_aw_score")),   #writes nothing for now, need to push other data to db
-        to_float(item.get("degree") or item.get("Degree")),                                     #writes nothing for now, need to push other data to db
-        item.get("llm_generated_program") or item.get("llm-generated-program"),
-        item.get("llm_generated_university") or item.get("llm-generated-university"),
+        int(item.get("p_id", idx)),                     # Primary key uses p_id unless it's missing, otherwise uses the loop index
+        item.get("program"),                            # Extract program data
+        item.get("comments"),                           # Extract comments/notes
+        to_date(item.get("date_added")),                # Extract date added and convert it to a date object to be consistent
+        item.get("url") or item.get("applicant_URL"),   # Extract application url
+        item.get("status"),                             # Extract Application status
+        item.get("term"),                               # Extract semester/term data
+        item.get("US/International") or item.get("us_or_international"),# Extract US/international data
+        clean_gpa(item.get("gpa")),                     # Extract GPA
+        clean_gre(item.get("gre_q"), "qv"),             # Extract gre_q and clean using clean_gre()
+        clean_gre(item.get("gre_v"), "qv"),             # Extract gre_v and clean using clean_gre()
+        clean_gre(item.get("gre_aw"), "aw"),            # Extract gre_aw and clean using clean_gre()
+        item.get("degree") or item.get("Degree"),       # Ectract degree
+        item.get("llm_generated_program") or item.get("llm-generated-program"),         # Extract llm program       
+        item.get("llm_generated_university") or item.get("llm-generated-university"),   # Extract llm university
     )
 
 def main():
-    
-    items = read_items(INPUT_JSON)
+    llm_items = read_items(LLM_JSON)
+
     rows = []
-    for i, item in enumerate(items):
+    for i, item in enumerate(llm_items):
         rows.append(extract_data(item, i + 1))
 
     with connect(DSN) as conn:
         with conn.cursor(row_factory=dict_row) as cur:
             cur.execute(CREATE_TABLE_SQL)
-            cur.executemany(UPSERT_SQL, rows)
+            cur.executemany(INSERT_SQL, rows)
         conn.commit()
 
     print(f"Pushed {len(rows)} rows into applicants.")
