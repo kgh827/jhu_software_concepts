@@ -1,17 +1,9 @@
-def scrape_data(max_applicants):
-    ########## BEGIN ADMISSIONS DATA EXTRACTION ##########
-    ## Going to need to initially set up pulling the first page of results
-    # need to extract <tr></tr>
-    # when examining, the first row of data is <tr></tr>, <tr class="tw-border-none"> for the second and third possible rows
-    ## Then need to enact the "submit form" type of action shown in the readings
-
+def scrape_data(max_applicants=None, latest_date_in_db=None):
     import urllib3
     from bs4 import BeautifulSoup
     import time
 
-
-    all_applicants = []         #this will eventually hold all of the applicant dictionaries to be sent to json
-    #max_applicants = 100      #number of students data to scrape
+    all_applicants = []                                 #this will eventually hold all of the applicant dictionaries to be sent to json
 
     http = urllib3.PoolManager()                        #set up a 'http pool manager' to make requests
 
@@ -20,8 +12,6 @@ def scrape_data(max_applicants):
 
 
     while len(all_applicants) < max_applicants:
-        #print(f"Scraping page {page}... (currently {len(all_applicants)} applicants)")
-        #print(f"Currently on {len(all_applicants)}")
         url = f"{initial_url}?page={page}" if page > 1 else initial_url     #iterates through current url
         response = http.request("GET", url)
 
@@ -33,14 +23,7 @@ def scrape_data(max_applicants):
         for tr in data_rows:
             data_row_list.append(tr)
 
-        #Categories of data to be extracted from the site
-        #for the URL, it is when you click on the little '...' thing on the right
-        #some of these need to be handled differently depending on their "depth" in the html tags
-        # r1_categories = ['university','program_name','degree_title','date_added','applicant_status','decision_date','applicant_URL']
-        # r2_categories = ['semester','student_location','GRE','GRE V','GRE AW','GPA']
-        # r3_categories = ['notes']
-
-        row_check = 0   #this variable acts as a reference to tell how many rows of data there are when parsing through
+        row_check = 0                                       #this variable acts as a reference to tell how many rows of data there are when parsing through
 
         for data_row in data_row_list:
 
@@ -165,6 +148,12 @@ def scrape_data(max_applicants):
                 url_tag = data_row.find("a", href=True, attrs={"data-ext-page-id": True})                           # searches for the applicant link in the by using several identifiers
                 applicant_dictionary['applicant_URL'] = url_tag["href"].split("#")[0] if url_tag else ""            # add applicant_url to applicant_dictionary
 
+                # Import the "url_exists_in_db" function to check if the url being read currently matches with anything in the DB
+                from query_data import url_exists_in_db
+                if applicant_dictionary['applicant_URL'] and url_exists_in_db(applicant_dictionary['applicant_URL']):   # If URL exists and is in the DB
+                    print(f"Stopping scrape — hit existing record {applicant_dictionary['applicant_URL']}")             # Stop scraping and return all_applicants dictionary
+                    return all_applicants
+
                 row_check = 1
 
             elif row_check == 1:
@@ -237,28 +226,15 @@ def scrape_data(max_applicants):
     return all_applicants
 
 if __name__ == "__main__":
-    import urllib3
-    ########## ROBOTS.TXT FILE DATA EXTRACTION ##########
-    http = urllib3.PoolManager()                            # set up a 'http pool manager' to make requests
-    url = "https://thegradcafe.com/robots.txt"              # This is the url location of the robots.txt document for thegradcafe.com
-    response = http.request("GET", url)                     # Setting up a GET request to pull the contents of the robots.txt file
+    from clean import clean_data                            #importing clean_data function from clean.py
+    from clean import save_data                             #importing save_data function from clean.py
+    #from clean import load_data                             #importing load_data function from clean.py
 
-    if response.status == 200:                              # IF response code 200 is detected (successful), print the robots.txt 
-        text_file_output = response.data                    # data provided by the response
-        text_file_output = text_file_output.decode("utf-8") # decode the file into a more readable format (utf-8 is plain text/.txt)
-        print('Robots.txt file loaded successfully.')
-        print(text_file_output)                            # print resulting text 
-    else:
-        print('There was an issue with the url entered.')
+    max_applicants = 50                                     #user enters desired number of applicants
 
-    from clean import clean_data                            # importing clean_data function from clean.py
-    from clean import save_data                             # importing save_data function from clean.py
-    from clean import load_data                             # importing load_data function from clean.py
-
-    max_applicants = 30000                                     # user enters desired number of applicants
-
-    results = scrape_data(max_applicants)                   # call the scrape_data(max_applicants) function to scrape data from thegradcafe                   
+    results = scrape_data(max_applicants)                   #call the scrape_data(max_applicants) function to scrape data from thegradcafe                   
     print("Scraped", len(results), "records")
-    cleaned = clean_data(results)                           # call the "clean_data()" function from the clean.py file
-    filename = save_data(cleaned)                           # call the "save_data()" function from the clean.py file
-    data = load_data(filename)                              # call the "load_data()" function from the clean.py file
+    cleaned = clean_data(results)                           #call the "clean_data()" function from the clean.py file
+    filename = save_data(cleaned)                           #call the "save_data()" function from the clean.py file
+    # Not necessary
+    #data = load_data(filename)                              #call the "load_data()" function from the clean.py file                  

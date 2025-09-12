@@ -1,7 +1,6 @@
 import os
 import io
 import json
-import re
 from datetime import datetime
 from typing import Any, List, Dict, Tuple
 from psycopg import connect
@@ -18,7 +17,7 @@ DSN = (
     f"password={os.getenv('PGPASSWORD')}"
 )
 
-BASE_DIR = os.path.dirname(__file__)    # Path to the current working directory of this script
+BASE_DIR = os.path.dirname(__file__)                                # Path to the current working directory of this script
 LLM_JSON = os.path.join(BASE_DIR, "LLM_app_data_GRE_GPA.jsonl")     # Json of the new data set after being processed by the LLM (new data to be able to get GPA/GRE data)
 
 # Set up the columns based on assignment description
@@ -89,9 +88,9 @@ def read_items(path):
     raw = io.open(path, "r", encoding="utf-8-sig").read()   # Open and read the json file contents as a string; encoding = utf-8-sig avoids byte order marks
     raw = raw.strip()                                       # Strip leading and ending whitespace
 
-    if not raw:         # If raw data is empty, returns an empty list
+    if not raw:                     # If raw data is empty, returns an empty list
         return []
-    try:                # Try to load entire json file as an object
+    try:                            # Try to load entire json file as an object
         obj = json.loads(raw)
         return obj["items"] if isinstance(obj, dict) and "items" in obj else obj
     except json.JSONDecodeError:    # If reading json file as an object fails, use this as a fail safe to read data line by line
@@ -104,8 +103,8 @@ def read_items(path):
 
 def to_date(s):
     if not s: 
-        return None     # Return nothing if s does not exist
-    s = str(s).strip()  # Strip whitepace
+        return None                 # Return nothing if s does not exist
+    s = str(s).strip()              # Strip whitepace
 
     # Standardize the month abbreviations to be consistent
     month_map = {
@@ -117,10 +116,10 @@ def to_date(s):
     # Replace the abbreviations and eliminate any other "filler", meaning "-", "/" and ","
     split_date = s.replace("-", " ").replace("/", " ").replace(",", " ").split()
 
-    new_date_parts = []                 # Empty list to store parts of the new date
+    new_date_parts = []                                 # Empty list to store parts of the new date
     for part in split_date:
-        part_Cap = part.capitalize()    # Capitalize the current part
-        if part_Cap in month_map:       # If the month is found
+        part_Cap = part.capitalize()                    # Capitalize the current part
+        if part_Cap in month_map:                       # If the month is found
             new_date_parts.append(month_map[part_Cap])  # Add to new_date_parts from "month_map" for standard month
         else:
             new_date_parts.append(part)                 # Otherwise add the year/day to new_date_parts 
@@ -148,30 +147,43 @@ def to_date(s):
     return None     # return nothing if it fails
 
 def to_float(x):
-    if x in (None, "", "NA", "N/A", "null"):
-        return None
+    if x in (None, "", "NA", "N/A", "null"):        # If the value is equal to common empty data sequences
+        return None                                 # Return "None"
     try:
-        return float(x)
-    except ValueError:
-        return None
+        return float(x)                             # Otherwise return the float of the input value                        
+    except ValueError:                              # Except Value Error to keep script going
+        return None                                 # Return "None" if reach this point
 
-def clean_gpa(val):
-    g = to_float(val)
-    if g is None:
-        return None
-    return g if 0.0 <= g <= 4.0 else None
+def clean_gpa(val):                                 
+    g = to_float(val)                               # Convert GPA value to float
+    if g is None:                                   # If there is no value, return "None"
+        return None                             
+    return g if 0.0 <= g <= 4.0 else None           # Return the GPA as a float if it is within the 1.0 - 4.0 range (Including 5 skews data)
 
 def clean_gre(val, kind):
-    s = to_float(val)
+    s = to_float(val)                               # Convert GRE score to float
     if s is None:
-        return None                                 # if there if no score, ignore
+        return None                                 # if there if no score, return "None"
     if kind == "aw":
         return s if 0.0 <= s <= 6.0 else None       # If the GRE analytical writing score is outside of the normal range, ignore
     return s if 130 <= s <= 170 else None           # If the GRE quantative/verbal score is outside of the normal range, ignore
 
 def extract_data(item, idx):
+    url = item.get("url") or item.get("applicant_URL")  # Obtain the current applicant url
+
+    # Use the URL to create a unique "p_id" value
+    p_id = None
+    if url:
+        try:
+            p_id = int(url.rstrip("/").split("/")[-1])  # Remove irrelevant url pieces
+        except ValueError:
+            pass
+
+    if p_id is None:
+        p_id = int(item.get("p_id", idx))               # If the previous code does not actually create a p_id, default to the loop index
+
     return (
-        int(item.get("p_id", idx)),                     # Primary key uses p_id unless it's missing, otherwise uses the loop index
+        p_id,                                           # Primary key uses p_id unless it's missing, otherwise uses the loop index
         item.get("program"),                            # Extract program data
         item.get("comments"),                           # Extract comments/notes
         to_date(item.get("date_added")),                # Extract date added and convert it to a date object to be consistent
@@ -188,8 +200,9 @@ def extract_data(item, idx):
         item.get("llm_generated_university") or item.get("llm-generated-university"),   # Extract llm university
     )
 
-def main():
-    llm_items = read_items(LLM_JSON)
+def main(path=None):
+    llm_file = path or LLM_JSON         # Fallback to default file name when this is ran as a standalone script
+    llm_items = read_items(llm_file)
 
     rows = []
     for i, item in enumerate(llm_items):

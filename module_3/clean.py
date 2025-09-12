@@ -7,12 +7,13 @@ def clean_data(results):
         university   = item.get("university", "").strip()       #clean whitespace and hold university name for reformatting
 
         if program_name and university:                         
-            program_field = f"{program_name}, {university}"     #combine them as shown in the sample json data
+            program_field = f"{program_name}, {university}"     #combine program and university fields as shown in the sample json data
         elif program_name:                                      
             program_field = program_name                        
         else:                                                   
             program_field = university
 
+        # Re-map the student record dictionary to match the format the LLM is expecting (if everything else is in correct order, it allows gpa/gre data to pass)
         mapped = {                                              
             "program": program_field,
             "comments": item.get("notes", ""),
@@ -22,8 +23,7 @@ def clean_data(results):
             "term": item.get("semester", ""),
             "US/International": item.get("student_location", ""),
             "Degree": item.get("degree_title", ""),
-            # CHECK: new normalized GPA/GRE fields
-            "gpa": item.get("gpa") or item.get("GPA", ""),
+            "gpa": item.get("gpa") or item.get("GPA", ""),     
             "gre_q": item.get("gre_q") or item.get("gre_quant") or item.get("GRE", ""),
             "gre_v": item.get("gre_v") or item.get("gre_verbal") or item.get("GRE V", ""),
             "gre_aw": item.get("gre_aw") or item.get("gre_awriting") or item.get("gre_aw_score") or item.get("GRE AW", "")
@@ -33,9 +33,13 @@ def clean_data(results):
 
 def save_data(cleaned):
     import json
-    filename = "app_data_GRE_GPA.json"
-    with open(filename, "w", encoding="utf-8") as f:   #open json file to be written to
-        json.dump(cleaned, f, indent=4, ensure_ascii=False)  #write all student dictionaries to the json file
+    from datetime import datetime
+
+    # Filename is now generated based on a time stamp rather than the default file name to avoid overwriting data
+    filename = f"scraped_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+    
+    with open(filename, "w", encoding="utf-8") as f:            # Open json file to be written to
+        json.dump(cleaned, f, indent=4, ensure_ascii=False)     # Write all student dictionaries to the json file
     
     print(f"Student data records have been saved to:  {filename}")
 
