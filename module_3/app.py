@@ -1,9 +1,14 @@
 from flask import Flask, render_template, redirect, url_for, flash
-from query_data import get_results        # Import to fetch analysis results
-from scrape import scrape_data            # Import scraper function
-import threading                          # For background execution
-from datetime import datetime             # For timestamping refresh messages
-import subprocess                         # To run the LLM as a subprocess
+from query_data import get_results              # Import to fetch analysis results
+from scrape import scrape_data                  # Import scraper function
+import threading                                # For background execution
+from datetime import datetime                   # For timestamping refresh messages
+import subprocess                               # To run the LLM as a subprocess
+import os
+import sys
+from clean import clean_data, save_data         # Import clean.py file and relevant functions
+import load_data 
+from pathlib import Path
 
 app = Flask(__name__)       # Initialize flask application object
 app.secret_key = "secret"   # Setting up secret key to sign cookies securely when using the flask "flash()" functionality
@@ -34,37 +39,41 @@ def pull_data():
             results = scrape_data(max_applicants=1000)      # Scrapes a maximum of 1000 applicants if scraping NEW data (prevents runaway scraping)
             print(f"Pulled {len(results)} new records!")
 
-            from clean import clean_data, save_data         # Import clean.py file and relevant functions
             cleaned = clean_data(results)
             filename = save_data(cleaned)                   # Save newly scraped data to a timestamped file
 
             # Attempt to run the LLM after scraping the data/creating the json
             try:
-                import os
-                import sys
-                # Resolve the current Python interpreter inside your venv
-                python_exe = sys.executable  
+                python_exe = sys.executable  # Resolve the current Python interpreter inside venv
 
-                # Ensure we pass the full absolute path to the JSON file
-                full_path = os.path.abspath(filename)
+                full_path = os.path.abspath(filename)  # Absolute path to scraped JSON
+                base = os.path.basename(full_path)     # e.g. scraped_20250914_115145.json
+                name, _ = os.path.splitext(base)       # ("scraped_20250914_115145", ".json")
+                module_3_dir = Path(__file__).resolve().parent  # Path to module_3 directory
 
-                # Had to use very specific routing/command calling to get the LLM to cooperate
-                subprocess.run(
-                    [
-                        python_exe, "-X", "utf8", "app.py",
-                        "--file", full_path
-                    ],
-                    cwd=r"C:\Users\Kevin\Documents\GitHub\module_3_Setup\llm_hosting",
-                    check=True
-                )
+                llm_output = os.path.join(module_3_dir, f"LLM_{name}.jsonl")
+
+                llm_dir = Path(__file__).resolve().parent / "llm_hosting"   # Point to llm_hosting folder
+
+                # Run the LLM and capture its stdout directly into llm_output
+                with open(llm_output, "w", encoding="utf-8") as f:
+                    subprocess.run(
+                        [
+                            python_exe, "-X", "utf8", "app.py",
+                            "--file", full_path,
+                            "--stdout"           # Ensures JSONL data is printed to stdout
+                        ],
+                        cwd=str(llm_dir),
+                        stdout=f,                # Capture into LLM_scraped_*.jsonl
+                        check=True
+                    )
+
                 print("LLM processing finished successfully.")
-            except subprocess.CalledProcessError as e:          # Except the subprocess/CalledProcess error
-                print(f"LLM step failed: {e}")
-                return   # Stop at this point and dont attempt to push to db
+                load_data.main(llm_output)  # Load the new LLM data into the DB
 
-            llm_output = full_path + ".jsonl"   # LLM generates output file
-            import load_data                
-            load_data.main(llm_output)          # Load new LLM data into the DB
+            except subprocess.CalledProcessError as e:
+                print(f"LLM step failed: {e}")
+                return   # Stop at this point and don’t attempt to push to db
 
         except Exception as e:
             print(f"Error pulling data: {e}")
@@ -89,6 +98,5 @@ def update_analysis():
     flash("Analysis refreshed at " + datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     return redirect(url_for("analysis"))
 
-
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0",debug=True,port=8080)

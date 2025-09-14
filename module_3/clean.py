@@ -1,3 +1,5 @@
+import json
+from datetime import datetime
 def clean_data(results):
     cleaned = []    #empty list to populate with the reformatted student record dictionaries  
 
@@ -32,8 +34,7 @@ def clean_data(results):
     return cleaned
 
 def save_data(cleaned):
-    import json
-    from datetime import datetime
+
 
     # Filename is now generated based on a time stamp rather than the default file name to avoid overwriting data
     filename = f"scraped_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
@@ -46,7 +47,6 @@ def save_data(cleaned):
     return filename
 
 def load_data(filename):
-    import json
     with open(filename, "r", encoding="utf-8") as f:
         data = json.load(f)
     

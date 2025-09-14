@@ -1,8 +1,13 @@
-def scrape_data(max_applicants=None, latest_date_in_db=None):
-    import urllib3
-    from bs4 import BeautifulSoup
-    import time
+import urllib3
+from bs4 import BeautifulSoup
+import time
+import clean
+from clean import clean_data                            #importing clean_data function from clean.py
+from clean import save_data 
+from query_data import url_exists_in_db
 
+def scrape_data(max_applicants=None, latest_date_in_db=None):
+                            #importing save_data function from clean.py
     all_applicants = []                                 #this will eventually hold all of the applicant dictionaries to be sent to json
 
     http = urllib3.PoolManager()                        #set up a 'http pool manager' to make requests
@@ -149,7 +154,7 @@ def scrape_data(max_applicants=None, latest_date_in_db=None):
                 applicant_dictionary['applicant_URL'] = url_tag["href"].split("#")[0] if url_tag else ""            # add applicant_url to applicant_dictionary
 
                 # Import the "url_exists_in_db" function to check if the url being read currently matches with anything in the DB
-                from query_data import url_exists_in_db
+
                 if applicant_dictionary['applicant_URL'] and url_exists_in_db(applicant_dictionary['applicant_URL']):   # If URL exists and is in the DB
                     print(f"Stopping scrape — hit existing record {applicant_dictionary['applicant_URL']}")             # Stop scraping and return all_applicants dictionary
                     return all_applicants
@@ -226,9 +231,6 @@ def scrape_data(max_applicants=None, latest_date_in_db=None):
     return all_applicants
 
 if __name__ == "__main__":
-    from clean import clean_data                            #importing clean_data function from clean.py
-    from clean import save_data                             #importing save_data function from clean.py
-    #from clean import load_data                             #importing load_data function from clean.py
 
     max_applicants = 50                                     #user enters desired number of applicants
 

@@ -223,21 +223,5 @@ def main():
     for row in q10:
         print(f"   {row['llm_generated_university']}: {row['n']}")
 
-    # Write Markdown summary
-    summary = f"""# Applicants summary
-
-- Total rows: {total}
-- Fall 2025 entries: {q1[0]['n']}
-- International entries: {pct(q2[0]['pct_international'])}
-- Averages (GPA(4.0) / GRE Q / GRE V / GRE AW): {q3[0]['avg_gpa_4']} / {q3[0]['avg_gre_q']} / {q3[0]['avg_gre_v']} / {q3[0]['avg_gre_aw']}
-- Avg GPA (4.0) for American students, Fall 2025: {q4[0]['avg_gpa_us_fall25']}
-- Acceptance rate, Fall 2025: {pct(q5[0]['pct_accept_fall25'])}
-- Avg GPA (4.0) among Fall 2025 Acceptances: {q6[0]['avg_gpa_accept_fall25']}
-- JHU Masters in CS entries (Fall 2025): {q7[0]['n']}
-- 2025 CS PhD acceptances to Georgetown: {q8[0]['n']}
-- Applicants by degree: {[f"{r['degree']}: {r['n']}" for r in q9]}
-- Top 10 universities: {[f"{r['llm_generated_university']}: {r['n']}" for r in q10]}
-"""
-
 if __name__ == "__main__":
     main()
