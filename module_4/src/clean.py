@@ -1,0 +1,61 @@
+import json
+from datetime import datetime
+
+def clean_data(results):
+    cleaned = []    # Empty list to populate with the reformatted student record dictionaries  
+
+    # Loop through each student data record dictionary from the scrape.py file
+    for item in results:
+        # Clean whitespace and hold program name/university name for reformatting
+        program_name = item.get("program_name", "").strip()     
+        university   = item.get("university", "").strip()       
+
+        # Combine program and university fields as shown in the sample json data
+        if program_name and university:                         
+            program_field = f"{program_name}, {university}"     
+        elif program_name:                                      
+            program_field = program_name                        
+        else:                                                   
+            program_field = university
+
+        # Restructure the student record dictionary to match the format the LLM is expecting (if everything else is in correct order, it allows gpa/gre data to pass)
+        mapped = {                                              
+            "program": program_field,
+            "comments": item.get("notes", ""),
+            "date_added": item.get("date_added", ""),
+            "url": item.get("applicant_URL", ""),
+            "status": item.get("applicant_status", ""),
+            "term": item.get("semester", ""),
+            "US/International": item.get("student_location", ""),
+            "Degree": item.get("degree_title", ""),
+            "gpa": item.get("gpa") or item.get("GPA", ""),     
+            "gre_q": item.get("gre_q") or item.get("gre_quant") or item.get("GRE", ""),
+            "gre_v": item.get("gre_v") or item.get("gre_verbal") or item.get("GRE V", ""),
+            "gre_aw": item.get("gre_aw") or item.get("gre_awriting") or item.get("gre_aw_score") or item.get("GRE AW", "")
+        }
+        cleaned.append(mapped)                                  
+    return cleaned
+
+def save_data(cleaned):
+
+
+    # Filename is now generated based on a time stamp rather than the default file name to avoid overwriting data
+    filename = f"scraped_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+    
+    # Open json file to be written to and write all student dictionaries to the json file
+    with open(filename, "w", encoding="utf-8") as f:            
+        json.dump(cleaned, f, indent=4, ensure_ascii=False) 
+    
+    print(f"Student data records have been saved to:  {filename}")
+
+    return filename
+
+def load_data(filename):
+    # Loads student data
+    with open(filename, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    
+    print(f"Student data records have been loaded from filename:  {filename}")
+
+    #print(json.dumps(data, indent=2, ensure_ascii=False))
+    return data
