@@ -5,7 +5,10 @@ from bs4 import BeautifulSoup as RealSoup
 
 class DummyHTTPResponse:
     """
-    Simulates fake HTTP response with HTML data
+    Dummy HTTP response for simulating urllib3 requests.
+
+    :param html: Fake HTML string to embed as response body.
+    :type html: str
     """
     def __init__(self, html: str):
         self.data = html.encode("utf-8")
@@ -13,10 +16,10 @@ class DummyHTTPResponse:
 @pytest.mark.scraper
 def test_scrape_decision_using_on(monkeypatch):
     """
-    This html emulates the situation that is used for determining acceptance/waitlist/rejection
-    date by using the word "on" (i.e. rejected ON ____, accepted ON _____)
-    --> If ON is present --> Split the data into applicant status and date
-    --> If ON is NOT present --> treat the cell as applicant_status without a date.
+    Verify decision parsing when status contains "on".
+
+    - If "on" is present, split into status and decision date.
+    - If not, treat cell as status only.
     """
     html = """
     <table>
@@ -43,14 +46,10 @@ def test_scrape_decision_using_on(monkeypatch):
 @pytest.mark.scraper
 def test_scrape_row2_gre_q_aw(monkeypatch):
     """
-    - This test simulates extraction of the GRE quantitative, analytical, and writing scores
-      from fake HTML.
-    - Row 2 of data is identified by "tw-border-none"
-    - The scraper extracts data from <span><div> and sends them to:
-    --> Spring 2026: Semester
-    --> American: Student Location
-    --> GRE 168: gre_q
-    --> GRE AW 4.5: gre_aw
+    Verify GRE extraction in row 2.
+
+    - Confirms ``gre_q`` and ``gre_aw`` fields are parsed.
+    - Checks that semester and student location are extracted.
     """
     html = """
     <table>
@@ -81,9 +80,10 @@ def test_scrape_row2_gre_q_aw(monkeypatch):
 @pytest.mark.scraper
 def test_scrape_limit(monkeypatch):
     """
-    This tests whether the scraper "limit" can handle cutting off in the middle of a page
-    The HTML given to the scraper are two one-row entries (no row 2 or 3)
-    At the end it checks whether the length is 1.
+    Verify scraper stops at max_applicants limit.
+
+    - Uses two dummy rows.
+    - Confirms only one is returned.
     """
     html = """
     <table>
@@ -97,13 +97,18 @@ def test_scrape_limit(monkeypatch):
 
 def patch_with_html(monkeypatch, html: str, stop_after_first: bool = False):
     """
-    Monkeypatch urllib3 and beautifulsoup so the scraper can run without making external connections.
-    - Page 1 contains the "offline" HTML
-    - Page 2 contains an empty table prompting the scraper to stop
+    Monkeypatch urllib3 and BeautifulSoup for offline scraping.
 
-    This also simulates "url_exists_in_db()"
-    - If stop_after_first = false --> url_exists_in_db() = false
-    - If stop_after_first = true  --> returns false for first url, true for 2nd url (hits existing record)
+    - First page returns supplied HTML.
+    - Subsequent pages return empty table.
+    - Allows simulating :func:`url_exists_in_db`.
+
+    :param monkeypatch: Pytest monkeypatch fixture.
+    :type monkeypatch: _pytest.monkeypatch.MonkeyPatch
+    :param html: Fake HTML content.
+    :type html: str
+    :param stop_after_first: Whether to simulate duplicate URL after first record.
+    :type stop_after_first: bool
     """
 
     # Creates a fake urllib3.poolmanager.request
@@ -150,10 +155,10 @@ def patch_with_html(monkeypatch, html: str, stop_after_first: bool = False):
 @pytest.mark.scraper
 def test_scrape_row1(monkeypatch):
     """
-    This test checks that reading row 1 data and appending previous applicant once a "new" row 1 starts
-    - Scraper has a dict active for current applicant (row_check = 1)
-    - When scraper finds a "new" row 1, it appends the previous applicant data and starts a new applicant
-    - Tested using two "row 1" rows consecutively, and should only write the first one (max_applicants = 1)
+    Verify row 1 handling.
+
+    - Confirms new row appends previous applicant record.
+    - Uses two consecutive row-1 entries.
     """
     fake_html = """
     <html><body><table>
@@ -183,9 +188,10 @@ def test_scrape_row1(monkeypatch):
 @pytest.mark.scraper
 def test_scrape_row2(monkeypatch):
     """
-    This test checks functionality of reading row 2 data (term, loction, gpa, gre)
-    - Row 2 has "tw-border-none", so data gets pulled from nested spans/divs
-    - This also contains a row 3 so that the "row_check=2" path is taken to append
+    Verify row 2 handling.
+
+    - Confirms GPA, GRE, and other fields are extracted.
+    - Ensures appending occurs when row 3 follows.
     """
     fake_html = """
     <html><body><table>
@@ -211,9 +217,10 @@ def test_scrape_row2(monkeypatch):
 @pytest.mark.scraper
 def test_scrape_row3(monkeypatch):
     """
-    This test checks functionality of reading row 3 data (notes)
-    - Row 2 is the 2nd consecutive row containing "tw-border-none"
-    - The scraper pulls data_entries[0] to as notes if they are present
+    Verify row 3 handling.
+
+    - Confirms notes field is extracted.
+    - Triggered by second "tw-border-none" row.
     """
     fake_html = """
     <html><body><table>
@@ -240,10 +247,10 @@ def test_scrape_row3(monkeypatch):
 @pytest.mark.scraper
 def test_scrape_existing_url_stop(monkeypatch):
     """
-    This test verifies that the scraper halts after finding a duplicate record if url_exists_in_db = true.
-    - This only works after at least one applicant has been appended.
-    - First applicant url returns false
-    - Second applicant url returns true
+    Verify scraper halts on existing URL.
+
+    - First URL is unique.
+    - Second URL triggers :func:`url_exists_in_db` and stops scraping.
     """
     fake_html = """
     <html><body><table>
@@ -268,6 +275,11 @@ def test_scrape_existing_url_stop(monkeypatch):
     assert len(results) == 1
 
 def test_scrape_page_is_alias(monkeypatch):
+    """
+    Verify :func:`scrape.scrape_page` delegates to :func:`scrape.scrape_data`.
+
+    - Confirms alias call executes underlying scraper.
+    """
     import src.scrape as s
     called = {}
 

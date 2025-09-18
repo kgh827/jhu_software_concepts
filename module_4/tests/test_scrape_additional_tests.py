@@ -4,16 +4,27 @@ from bs4 import BeautifulSoup as RealSoup
 
 class DummyHTTPResponse:
     """
-    Dummy http response to mimic urllib3 responses to match behavior
+    Dummy HTTP response for fake urllib3 calls.
+
+    :param html: Fake HTML string.
+    :type html: str
     """
     def __init__(self, html: str):
         self.data = html.encode("utf-8")
 
 def make_pool(html_first: str, html_second: str = "<html><body><table></table></body></html>"):
     """
-    Creates fake http pool that provides the fake html pages
-    - First request returns html_first
-    - Second request returns html_second
+    Create dummy HTTP pool returning fake HTML.
+
+    - First request returns ``html_first``.
+    - Second request returns ``html_second``.
+
+    :param html_first: HTML for first request.
+    :type html_first: str
+    :param html_second: HTML for subsequent requests.
+    :type html_second: str
+    :return: Dummy pool instance.
+    :rtype: object
     """
     class DummyPool:
         def __init__(self):
@@ -26,10 +37,16 @@ def make_pool(html_first: str, html_second: str = "<html><body><table></table></
 
 def patch_dependencies(monkeypatch, pool_instance):
     """
-    This function Monkeypatches several  dependencies
-    - Replaces poolmanager with dummy pool
-    - Grabs beautifulsoup actual functionality
-    - Forces url_exists_in_db = false
+    Monkeypatch scraper dependencies for testing.
+
+    - Replace PoolManager with dummy pool.
+    - Use real BeautifulSoup parsing.
+    - Force :func:`url_exists_in_db` to always return False.
+
+    :param monkeypatch: Pytest monkeypatch fixture.
+    :type monkeypatch: _pytest.monkeypatch.MonkeyPatch
+    :param pool_instance: Dummy pool instance.
+    :type pool_instance: object
     """
     # Make PoolManager() return our pool_instance
     monkeypatch.setattr(scrape.urllib3, "PoolManager", lambda: pool_instance)
@@ -48,7 +65,9 @@ def patch_dependencies(monkeypatch, pool_instance):
 @pytest.mark.scraper
 def test_decision_with_on_split(monkeypatch):
     """
-    Tests the portion of the scraping code that deal with splitting status/date by using "on" as an identifier.
+    Verify decision/status split when "on" keyword is present.
+
+    - Ensures applicant_status and decision_date fields are parsed.
     """
     # Fake HTML
     html = """
@@ -78,8 +97,10 @@ def test_decision_with_on_split(monkeypatch):
 @pytest.mark.scraper
 def test_row2_path_and_sleep(monkeypatch):
     """
-    Checks the functionality of row 2 when row 3 does not exist.
-    Also checks if time.sleep occurs when looping through a page
+    Verify row 2 handling without row 3.
+
+    - Confirms GPA and GRE fields are extracted.
+    - Ensures :func:`time.sleep` is called at least once per page.
     """
     # Fake HTML
     html = """
@@ -118,8 +139,9 @@ def test_row2_path_and_sleep(monkeypatch):
 @pytest.mark.scraper
 def test_added_this_page_only_header(monkeypatch):
     """
-    Checks what happens when a page only has a header
-    Verifies scraper exits when added_this_page = 0
+    Verify scraper behavior when only table header is present.
+
+    - Confirms scraper exits with no data when no rows are added.
     """
     html = """
     <html><body><table>
@@ -135,8 +157,10 @@ def test_added_this_page_only_header(monkeypatch):
 @pytest.mark.scraper
 def test_row3_path_and_reset(monkeypatch):
     """
-    Checks path of row 3 where notes are extracted
-    Also checks that row_check correctly resets for the next applicant
+    Verify row 3 path and reset logic.
+
+    - Ensures notes are extracted.
+    - Confirms row_check resets for next applicant.
     """
     html = """
     <html><body><table>

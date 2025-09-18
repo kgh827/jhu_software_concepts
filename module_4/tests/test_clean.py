@@ -6,8 +6,17 @@ import src.clean as clean
 
 @pytest.mark.analysis
 def test_clean_data_dict_fields():
-    """clean_data() should correctly route raw applicant fields to cleaned LLM input."""
+    """
+    Test :func:`clean.clean_data` for correct field routing.
 
+    - Ensures raw applicant fields are mapped into cleaned records.
+    - Confirms program and university are combined.
+    - Verifies GPA is preserved as a string.
+    - Confirms applicant status and URL are aligned.
+
+    :return: None
+    :rtype: NoneType
+    """
     # Raw applicant data that might be scraped from grad cafe
     raw = [
         {
@@ -49,7 +58,15 @@ def test_clean_data_dict_fields():
 
 @pytest.mark.analysis
 def test_clean_data_program_or_university_only():
-    """clean_data() should be able to handle missing program/university data entries."""
+    """
+    Test :func:`clean.clean_data` with missing program or university fields.
+
+    - If only program name is provided, it should become the ``program`` field.
+    - If only university name is provided, it should become the ``program`` field.
+
+    :return: None
+    :rtype: NoneType
+    """
 
     # Test for if only program name is provided
     raw = [{"program_name": "Math", "university": ""}]
@@ -64,7 +81,17 @@ def test_clean_data_program_or_university_only():
 
 @pytest.mark.analysis
 def test_save_and_load_data(tmp_path):
-    """Check that save_data() writes JSON file, and that load_data() reads it back."""
+    """
+    Verify :func:`clean.save_data` and :func:`clean.load_data`.
+
+    - ``save_data`` should write cleaned records to a JSON file.
+    - ``load_data`` should successfully read them back.
+
+    :param tmp_path: Temporary path provided by pytest for file writes.
+    :type tmp_path: pathlib.Path
+    :return: None
+    :rtype: NoneType
+    """
 
     # Set up a dummy cleaned data entry
     cleaned = [

@@ -48,7 +48,17 @@ dummy_conn = DummyConn()
 
 @pytest.fixture(autouse=True)
 def fake_psycopg(monkeypatch):
-    """Monkeypatch psycopg.connect to always return the same DummyConn."""
+    """
+    Monkeypatch :mod:`psycopg.connect` to return a dummy connection.
+
+    Ensures that tests for :mod:`db` run without connecting to a real
+    PostgreSQL database. Resets dummy state before each test.
+
+    :param monkeypatch: Pytest fixture for patching attributes at runtime.
+    :type monkeypatch: _pytest.monkeypatch.MonkeyPatch
+    :yield: Applies the patch before each test automatically.
+    :rtype: None
+    """
     monkeypatch.setattr(db.psycopg, "connect", lambda dsn: dummy_conn)
     # Reset state before each test
     dummy_conn.cursor_obj.executed.clear()
@@ -57,7 +67,14 @@ def fake_psycopg(monkeypatch):
 
 @pytest.mark.db
 def test_ensure_schema_runs():
-    """ensure_schema should run CREATE TABLE without error."""
+    """
+    Test that :func:`db.ensure_schema` executes a CREATE TABLE statement.
+
+    Confirms that schema setup runs without error and issues the correct SQL.
+
+    :return: None
+    :rtype: NoneType
+    """
     db.ensure_schema("fake_dsn")
     # Verify a CREATE TABLE statement was executed
     assert any("CREATE TABLE" in sql for sql, _ in dummy_conn.cursor_obj.executed)
@@ -65,7 +82,15 @@ def test_ensure_schema_runs():
 
 @pytest.mark.db
 def test_insert_rows_executes_insert():
-    """insert_rows should execute INSERT statements and commit."""
+    """
+    Test that :func:`db.insert_rows` executes an INSERT and commits.
+
+    Uses a dummy connection to capture executed SQL and verify that
+    insertion attempts occur.
+
+    :return: None
+    :rtype: NoneType
+    """
     rows = [
         {
             "applicant_url": "http://fake1",
@@ -86,6 +111,13 @@ def test_insert_rows_executes_insert():
 
 @pytest.mark.db
 def test_count_rows_returns_value():
-    """count_rows should return the fake SELECT COUNT(*) value."""
+    """
+    Test that :func:`db.count_rows` returns the expected count.
+
+    Uses a dummy connection to simulate ``SELECT COUNT(*)`` returning 42.
+
+    :return: None
+    :rtype: NoneType
+    """
     count = db.count_rows("fake_dsn")
     assert count == 42

@@ -6,8 +6,10 @@ import pytest
 
 class InlineThread:
     """
-    This function fakes "threading.thread" in order to be able to 
-    run the scraper without creating a background thread.
+    Fake replacement for :class:`threading.Thread`.
+
+    Used to run scraper tasks synchronously during tests
+    without creating background threads.
     """
     def __init__(self, target, args=(), kwargs=None):
         self._target = target
@@ -21,8 +23,15 @@ class InlineThread:
 @pytest.fixture
 def client_base(monkeypatch):
     """
-    This function simulates requests.
-    It monkeypatches the minimum allowable default data for get_results and clean_data
+    Provide a baseline Flask test client with minimal monkeypatches.
+
+    - Replaces :func:`get_results` and :func:`clean_data` with stubs.
+    - Yields a Flask test client instance for route testing.
+
+    :param monkeypatch: Pytest fixture for patching dependencies.
+    :type monkeypatch: _pytest.monkeypatch.MonkeyPatch
+    :yield: A Flask test client instance.
+    :rtype: flask.testing.FlaskClient
     """
     monkeypatch.setattr(app, "get_results", lambda: {"total": 1})
     monkeypatch.setattr(app, "clean_data", lambda d: d)
@@ -31,7 +40,15 @@ def client_base(monkeypatch):
 
 def test_pull_data_when_running(client_base, monkeypatch):
     """
-    This simulates the pull data button being pressed while there is already a scrape running
+    Verify ``/pull_data`` rejects requests if scraping is already running.
+
+    - Sets the global scrape flag.
+    - Ensures the response contains an error flash message.
+
+    :param client_base: Flask test client.
+    :type client_base: flask.testing.FlaskClient
+    :param monkeypatch: Pytest fixture for patching.
+    :type monkeypatch: _pytest.monkeypatch.MonkeyPatch
     """
     app.scrape_running = True
     resp = client_base.get("/pull_data", follow_redirects=True)
@@ -41,9 +58,18 @@ def test_pull_data_when_running(client_base, monkeypatch):
 
 def test_pull_data_llm_failure_exits_and_resets(monkeypatch, tmp_path, client_base):
     """
-    Simulates LLM step failing (subprocess throws CalledProcessError) 
-    Verifies load_data.main should NOT be called
-    Verifies scrape_running reset back to false
+    Simulate LLM subprocess failure.
+
+    - Forces :func:`subprocess.run` to raise an error.
+    - Confirms :func:`load_data.main` is not called.
+    - Ensures scrape flag resets to ``False``.
+
+    :param monkeypatch: Pytest fixture for patching.
+    :type monkeypatch: _pytest.monkeypatch.MonkeyPatch
+    :param tmp_path: Temporary file path for saving test data.
+    :type tmp_path: pathlib.Path
+    :param client_base: Flask test client.
+    :type client_base: flask.testing.FlaskClient
     """
     # Monkeypatch in "InlineThread" in place of actual threading 
     monkeypatch.setattr(app.threading, "Thread", InlineThread)
@@ -73,7 +99,15 @@ def test_pull_data_llm_failure_exits_and_resets(monkeypatch, tmp_path, client_ba
 
 def test_pull_data_scrape_raises_still_resets(monkeypatch, client_base):
     """
-    Test for when scrape_data raises an error, and the program handles the exception
+    Verify scrape errors are handled gracefully.
+
+    - Forces :func:`scrape_data` to raise an error.
+    - Confirms the scrape flag resets to ``False``.
+
+    :param monkeypatch: Pytest fixture for patching.
+    :type monkeypatch: _pytest.monkeypatch.MonkeyPatch
+    :param client_base: Flask test client.
+    :type client_base: flask.testing.FlaskClient
     """
     monkeypatch.setattr(app.threading, "Thread", InlineThread)
 
@@ -89,8 +123,18 @@ def test_pull_data_scrape_raises_still_resets(monkeypatch, client_base):
 
 def test_pull_data_llm_success_calls_load(monkeypatch, tmp_path, client_base):
     """
-    LLM path response if LLM succeeds
-    Calls load_data.main with the produced jsonl path
+    Simulate successful LLM processing.
+
+    - Monkeypatches :func:`subprocess.run` to emulate success.
+    - Confirms :func:`load_data.main` is called with the JSONL output.
+    - Ensures scrape flag resets to ``False``.
+
+    :param monkeypatch: Pytest fixture for patching.
+    :type monkeypatch: _pytest.monkeypatch.MonkeyPatch
+    :param tmp_path: Temporary file path for saving test data.
+    :type tmp_path: pathlib.Path
+    :param client_base: Flask test client.
+    :type client_base: flask.testing.FlaskClient
     """
     monkeypatch.setattr(app.threading, "Thread", InlineThread)
     monkeypatch.setattr(app, "scrape_data", lambda **k: [{"url":"http://x/1"}])
@@ -118,7 +162,15 @@ def test_pull_data_llm_success_calls_load(monkeypatch, tmp_path, client_base):
 
 def test_update_analysis_during_scrape(monkeypatch, client_base):
     """
-    If scraping is running, update_analysis should refuse and flash a message
+    Verify ``/update_analysis`` refuses while scraping is in progress.
+
+    - Sets the global scrape flag to ``True``.
+    - Ensures the response contains an error flash message.
+
+    :param monkeypatch: Pytest fixture for patching.
+    :type monkeypatch: _pytest.monkeypatch.MonkeyPatch
+    :param client_base: Flask test client.
+    :type client_base: flask.testing.FlaskClient
     """
     app.scrape_running = True
     resp = client_base.get("/update_analysis", follow_redirects=True)

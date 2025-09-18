@@ -14,18 +14,61 @@ DSN = (
 )
 
 def sql_query(sql, *params):
-    # Run a query against the PostgreSQL database and return rows as dicts.
+    """
+    Execute a SQL query against the PostgreSQL database.
+
+    Opens a connection using the global DSN and executes the query with
+    the provided parameters. Results are returned as a list of dictionaries,
+    where each dictionary corresponds to a row.
+
+    :param sql: SQL query string with optional placeholders.
+    :type sql: str
+    :param params: Parameters to safely substitute into the SQL query.
+    :type params: tuple
+    :return: List of query results, each row represented as a dictionary.
+    :rtype: list[dict]
+    """
     with connect(DSN) as conn:
         with conn.cursor(row_factory=dict_row) as cur:
             cur.execute(sql, params)                    # Execute query
             return cur.fetchall()
 
 def pct(x):
+    """
+    Convert a numeric value into a formatted percentage string.
+
+    :param x: Numeric value to convert (e.g., 50.1234).
+    :type x: float
+    :return: Percentage string rounded to 2 decimal places (e.g., "50.12%").
+    :rtype: str
+    """
     return f"{x:.2f}%"  # Convert value to percent
 
 def get_results():
-    # Run the same set of queries as `main()`, but instead of printing, return results in a dictionary to use on the flask site
-    
+    """
+    Run a series of predefined queries against the applicants database.
+
+    This function executes multiple queries to calculate statistics about
+    applicants, such as counts, averages, acceptance rates, and top
+    universities. Results are returned as a dictionary for use in the
+    Flask application.
+
+    The queries include:
+      - Total applicants
+      - Fall 2025 applicant count
+      - Percentage of international students
+      - Average GPA and GRE scores
+      - GPA of American students in Fall 2025
+      - Acceptance rate for Fall 2025
+      - Average GPA of accepted applicants (Fall 2025)
+      - Johns Hopkins CS Masters applicant count
+      - Georgetown CS PhD acceptances
+      - Degree distribution
+      - Top 10 universities by applicant count
+
+    :return: Dictionary mapping query names to results.
+    :rtype: dict[str, Any]
+    """
     results = {}
 
     results["total"] = sql_query("SELECT COUNT(*) AS total FROM applicants;")[0]["total"]
@@ -125,12 +168,31 @@ def get_results():
     return results
 
 def url_exists_in_db(url):
-    # This function checks if the URL for a given student is already in the database
-    # Returns a list with 1 columnif a given url exists, returns empty list otherwise
+    """
+    Check if a given applicant URL already exists in the database.
+
+    Executes a query that searches for a record with the specified URL.
+    Returns ``True`` if at least one record is found, ``False`` otherwise.
+
+    :param url: Applicant URL to check.
+    :type url: str
+    :return: ``True`` if the URL exists in the database, ``False`` otherwise.
+    :rtype: bool
+    """
     result = sql_query("SELECT 1 FROM applicants WHERE url = %s LIMIT 1;", url) 
     return len(result) > 0
 
 def main():
+    """
+    Run queries and print results to the console.
+
+    Executes the same queries as :func:`get_results`, but prints the
+    results in a human-readable format instead of returning them. This
+    function is primarily intended for debugging and manual inspection.
+
+    :return: None
+    :rtype: NoneType
+    """
     # Determine total number of applicant data rows in the db
     total = sql_query("SELECT COUNT(*) AS total FROM applicants;")[0]["total"]  # Executing a query to determine the number of rows in the db
     print("Total number of rows in applicants database:", total)

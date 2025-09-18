@@ -3,8 +3,12 @@ import src.query_data as qd
 
 class DummyCursor:
     """
-    DummyCursor acts as a dummy database to interact with for the get_results(), url_exists_in_db(), and main()
-    can execute queries without actually connecting to a db.
+    Dummy database cursor for testing :mod:`query_data`.
+
+    - Records executed SQL statements and parameters.
+    - Returns canned results for specific queries
+      (e.g., JHU Masters in CS, Georgetown PhD, applicant counts).
+    - Used to simulate PostgreSQL behavior without a real DB.
     """
 
     def __init__(self):
@@ -126,8 +130,10 @@ class DummyCursor:
 
 class DummyConn:
     """
-    Simulate psycopg connection object
-    .cursor() returns a dummy cursor
+    Dummy database connection for testing.
+
+    - Returns :class:`DummyCursor` from :meth:`cursor`.
+    - Implements context manager protocol.
     """
     def cursor(self, *a, **k): 
         return DummyCursor()
@@ -140,7 +146,10 @@ class DummyConn:
 @pytest.fixture(autouse=True)
 def fake_psycopg(monkeypatch):
     """
-    Replace qd.connect and return dummy connection 
+    Automatically patch :func:`qd.connect` to return a dummy connection.
+
+    :param monkeypatch: Pytest fixture for patching dependencies.
+    :type monkeypatch: _pytest.monkeypatch.MonkeyPatch
     """
     monkeypatch.setattr(qd, "connect", lambda dsn=None: DummyConn())
 
@@ -149,7 +158,10 @@ def fake_psycopg(monkeypatch):
 @pytest.mark.analysis
 def test_pct_formatting():
     """
-    Test Percent formatting
+    Verify :func:`qd.pct` percentage formatting.
+
+    - Confirms correct rounding to two decimal places.
+    - Handles zero input properly.
     """
     assert qd.pct(12.3456) == "12.35%"
     assert qd.pct(0) == "0.00%"
@@ -158,7 +170,11 @@ def test_pct_formatting():
 @pytest.mark.analysis
 def test_get_results_all_keys_and_values():
     """
-    get_results() calls a bunch of sql queries and DummyCursor returns values for each.
+    Verify :func:`qd.get_results` runs all SQL queries.
+
+    - Confirms expected keys are present in results.
+    - Checks that dummy values are returned for counts and averages.
+    - Validates list structures for degree counts and top universities.
     """
     results = qd.get_results()
 
@@ -210,7 +226,10 @@ def test_url_exists_in_db_true_false(monkeypatch):
 @pytest.mark.analysis
 def test_main_prints(capsys):
     """
-    Run main() and make sure it prints all expected data.
+    Verify :func:`qd.url_exists_in_db` true/false behavior.
+
+    - Monkeypatches :func:`qd.sql_query` to return empty or non-empty lists.
+    - Confirms output matches expectations.
     """
     qd.main()
 

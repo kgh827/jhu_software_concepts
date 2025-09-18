@@ -4,7 +4,18 @@ import flask_app
 @pytest.fixture
 def client(monkeypatch):
     """
-    This fixture sets up a flask client with monkeypatched dependencies
+    Provide a Flask test client with monkeypatched dependencies.
+
+    - Uses an in-memory fake DB dictionary to track inserted rows.
+    - Monkeypatches :func:`scrape_data`, :func:`clean_data`, :func:`load_data`,
+      and :func:`get_results` to use the fake DB.
+    - Enables Flask testing mode.
+    - Yields a Flask test client.
+
+    :param monkeypatch: Pytest fixture for patching dependencies.
+    :type monkeypatch: _pytest.monkeypatch.MonkeyPatch
+    :yield: Flask test client for making requests.
+    :rtype: flask.testing.FlaskClient
     """
     # Set up fake DB
     fake_db = {"rows": []}
@@ -30,7 +41,14 @@ def client(monkeypatch):
 @pytest.mark.integration
 def test_end_to_end_flow(client):
     """
-    This is the integration test simulating end to end flow through the app
+    Full integration test covering app flow.
+
+    - Simulates pressing ``pull_data`` and ``update_analysis`` buttons.
+    - Loads the index route (``/``).
+    - Confirms expected text is present in the rendered HTML.
+
+    :param client: Flask test client.
+    :type client: flask.testing.FlaskClient
     """
     # Simulate pressing "pull data" button
     resp = client.get("/pull_data")

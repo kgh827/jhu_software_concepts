@@ -77,15 +77,19 @@ def read_items(path):
     """
     Read and parse items from a JSON or JSON-lines file.
 
-    Args:
-        path (str): Path to the input file.
+    Attempts multiple strategies depending on file structure:
+    
+    - If the file is empty, returns an empty list.
+    - If the file contains a JSON object with an ``items`` key,
+      returns the value of that key.
+    - If the file contains a JSON array, returns the array.
+    - If the file is JSON-lines formatted (one JSON object per line),
+      returns a list of parsed objects.
 
-    Returns:
-        items: List of items pulled from the file. If the file contains:
-            - A JSON object with an "items" key returns value of data.
-            - A plain JSON list returns the list.
-            - JSON-lines (one JSON object per line) returns a list of parsed objects.
-            - An empty file returns an empty list.
+    :param path: Path to the input file.
+    :type path: str
+    :return: Parsed list of items.
+    :rtype: list[dict]
     """
     raw = io.open(path, "r", encoding="utf-8-sig").read()   # Open and read the json file contents as a string; encoding = utf-8-sig avoids byte order marks
     raw = raw.strip()                                       # Strip leading and ending whitespace
@@ -106,14 +110,24 @@ def read_items(path):
 
 def to_date(s: str | None) -> date | None:
     """
-    Supported:
-      - MM/DD/YYYY or M/D/YYYY
-      - MM/DD/YY or M/D/YY
-      - Feb 3 2025, February 3 2025, 3 Feb 2025, 3 February 2025
-      - Hyphenated month names like 3-Feb-2025 or 03-Feb-25
-      - Month + Year like "September 2025" (defaults to the 1st of the month)
-      - Ordinals (3rd -> 3) and 'Sept.' -> 'Sep'
-    Returns None if it can't parse.
+    Convert a string into a :class:`datetime.date` if possible.
+
+    Supported formats include:
+    
+    - ``MM/DD/YYYY`` or ``M/D/YYYY``
+    - ``MM/DD/YY`` or ``M/D/YY``
+    - Worded formats: e.g. ``Feb 3 2025``, ``3 February 2025``
+    - Hyphenated formats: e.g. ``03-Feb-25``
+    - Month + Year only: e.g. ``September 2025`` (defaults to day = 1)
+    - Ordinals: e.g. ``3rd`` → ``3``
+    - Abbreviated months: e.g. ``Sept.`` → ``Sep``
+
+    Returns ``None`` if parsing fails.
+
+    :param s: Input string containing a date.
+    :type s: str | None
+    :return: Parsed date object or ``None``.
+    :rtype: datetime.date | None
     """
     if not s or not s.strip():
         return None
@@ -154,6 +168,19 @@ def to_date(s: str | None) -> date | None:
     return None
 
 def to_float(x):
+    """
+    Convert a value into a float if valid.
+
+    - Returns ``None`` for missing values such as ``None``, ``""``, ``"NA"``,
+      ``"N/A"``, or ``"null"``.
+    - Returns ``float(x)`` if conversion succeeds.
+    - Returns ``None`` if conversion fails.
+
+    :param x: Input value to convert.
+    :type x: str | int | float | None
+    :return: Converted float or ``None``.
+    :rtype: float | None
+    """
     if x in (None, "", "NA", "N/A", "null"):        # If the value is equal to common empty data sequences
         return None                                 # Return "None"
     try:
@@ -161,13 +188,38 @@ def to_float(x):
     except ValueError:                              # Except Value Error to keep script going
         return None                                 # Return "None" if reach this point
 
-def clean_gpa(val):                                 
+def clean_gpa(val): 
+    """
+    Validate and normalize GPA values.
+
+    - Returns ``None`` if the input is invalid.
+    - Returns the GPA as a float if in the range ``0.0``–``4.0``.
+    - Ignores values outside the valid range.
+
+    :param val: GPA value to clean.
+    :type val: str | float | None
+    :return: Validated GPA value.
+    :rtype: float | None
+    """                                
     g = to_float(val)                               # Convert GPA value to float
     if g is None:                                   # If there is no value, return "None"
         return None                             
     return g if 0.0 <= g <= 4.0 else None           # Return the GPA as a float if it is within the 1.0 - 4.0 range (Including 5 skews data)
 
 def clean_gre(val, kind):
+    """
+    Validate and normalize GRE scores.
+
+    - For quantitative/verbal (``kind="qv"``): valid range is ``130``–``170``.
+    - For analytical writing (``kind="aw"``): valid range is ``0.0``–``6.0``.
+
+    :param val: GRE score to clean.
+    :type val: str | float | None
+    :param kind: GRE type: ``"qv"`` for quantitative/verbal, ``"aw"`` for analytical writing.
+    :type kind: str
+    :return: Validated GRE score.
+    :rtype: float | None
+    """
     s = to_float(val)                               # Convert GRE score to float
     if s is None:
         return None                                 # if there if no score, return "None"
@@ -176,6 +228,19 @@ def clean_gre(val, kind):
     return s if 130 <= s <= 170 else None           # If the GRE quantative/verbal score is outside of the normal range, ignore
 
 def extract_data(item, idx):
+    """
+    Extract and normalize applicant data from a raw JSON record.
+
+    Attempts to build a structured tuple corresponding to database
+    fields, performing type cleaning for GPA, GRE, and dates.
+
+    :param item: Applicant JSON record.
+    :type item: dict
+    :param idx: Fallback index used if a primary key cannot be derived.
+    :type idx: int
+    :return: Extracted applicant data as a tuple aligned with table schema.
+    :rtype: tuple
+    """
     url = item.get("url") or item.get("applicant_URL")  # Obtain the current applicant url
 
     # Use the URL to create a unique "p_id" value
@@ -208,6 +273,19 @@ def extract_data(item, idx):
     )
 
 def main(path=None):
+    """
+    Load processed applicant data into the PostgreSQL database.
+
+    - Reads items from a JSON or JSON-lines file.
+    - Extracts fields into structured tuples.
+    - Creates the ``applicants`` table if it does not exist.
+    - Inserts rows, ignoring conflicts on ``p_id``.
+
+    :param path: Optional path to the LLM JSON file. Defaults to ``LLM_JSON``.
+    :type path: str | None
+    :return: None
+    :rtype: NoneType
+    """
     llm_file = path or LLM_JSON         # Fallback to default file name when this is ran as a standalone script
     llm_items = read_items(llm_file)
 

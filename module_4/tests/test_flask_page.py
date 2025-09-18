@@ -10,7 +10,18 @@ This file tests flask app responses when things go as intended
 @pytest.fixture
 def client(monkeypatch):
     """
-    Monkeypatch all dependencies to allow tests to be predictable
+    Provide a Flask test client with monkeypatched dependencies.
+
+    This fixture:
+      - Replaces :func:`get_results` with dummy values.
+      - Stubs :func:`scrape_data`, :func:`clean_data`, :func:`save_data`,
+        and :func:`load_data` with no-op implementations.
+      - Yields a Flask test client for route testing.
+
+    :param monkeypatch: Pytest fixture for patching dependencies.
+    :type monkeypatch: _pytest.monkeypatch.MonkeyPatch
+    :yield: A Flask test client instance.
+    :rtype: flask.testing.FlaskClient
     """
     monkeypatch.setattr(app, "get_results", lambda: {"total": 1, "fall_2025": 1})
     monkeypatch.setattr(app, "scrape_data", lambda *a, **k: [])
@@ -24,7 +35,13 @@ def client(monkeypatch):
 
 def test_index_route(client):
     """
-    Test to check if the index page returns 200 and has the word "Analysis" in it
+    Verify the index (``/``) route.
+
+    - Confirms the response status code is 200.
+    - Ensures the rendered page contains the word ``Analysis``.
+
+    :param client: Flask test client.
+    :type client: flask.testing.FlaskClient
     """
     resp = client.get("/")
     assert resp.status_code == 200
@@ -32,7 +49,13 @@ def test_index_route(client):
 
 def test_pull_data_route(client):
     """
-    Perform a "pull_data" action and trigger the scraping and LLM portion of the code
+    Verify the ``/pull_data`` route.
+
+    - Triggers scraping and LLM pipeline.
+    - Confirms redirect and success flash message.
+
+    :param client: Flask test client.
+    :type client: flask.testing.FlaskClient
     """
     resp = client.get("/pull_data", follow_redirects=True)
     assert resp.status_code == 200
@@ -40,7 +63,13 @@ def test_pull_data_route(client):
 
 def test_update_analysis_route(client):
     """
-    Perform an "update_analysis" action and trigger the return of the analysis html.
+    Verify the ``/update_analysis`` route.
+
+    - Confirms it refreshes analysis successfully.
+    - Ensures HTML title ``Grad School Cafe Data Analysis`` is present.
+
+    :param client: Flask test client.
+    :type client: flask.testing.FlaskClient
     """
     resp = client.get("/update_analysis", follow_redirects=True)
     assert resp.status_code == 200
@@ -48,7 +77,13 @@ def test_update_analysis_route(client):
 
 def test_mock_llm(monkeypatch):
     """
-    This test emulates the LLM subprocess response to indicate a successful LLM run
+    Test behavior when the LLM subprocess runs successfully.
+
+    - Monkeypatches :func:`subprocess.run` to emulate success.
+    - Confirms ``/pull_data`` redirects back to the home page.
+
+    :param monkeypatch: Pytest fixture for patching subprocess behavior.
+    :type monkeypatch: _pytest.monkeypatch.MonkeyPatch
     """
     def fake_run(*args, **kwargs):
         return subprocess.CompletedProcess(args, 0)

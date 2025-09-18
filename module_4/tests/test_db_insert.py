@@ -8,8 +8,16 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..",
 @pytest.mark.db
 def test_insert_rows_idempotent(monkeypatch):
     """
-    Test to verify insert_rows can handle idempotent row inserts
-    Uses monkeypatching to avoid interacting with the database directly.
+    Verify that :func:`db.insert_rows` can handle duplicate row inserts safely.
+
+    This test monkeypatches :mod:`psycopg` to avoid a real database connection
+    and simulates inserting duplicate applicant rows. Because the SQL uses
+    ``ON CONFLICT DO NOTHING``, only one unique record should be stored.
+
+    :param monkeypatch: Pytest fixture for patching attributes at runtime.
+    :type monkeypatch: _pytest.monkeypatch.MonkeyPatch
+    :return: None
+    :rtype: NoneType
     """
     # This list collects the row data that is meant to be inserted into the database by "insert_rows"
     inserted = []

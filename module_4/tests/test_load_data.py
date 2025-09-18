@@ -5,7 +5,14 @@ import src.load_data as ld
 @pytest.mark.db
 def test_to_date_valid_and_invalid():
     """
-    Test for the "to_date()" function
+    Validate :func:`ld.to_date` with valid and invalid inputs.
+
+    - Accepts semester terms or returns ``None``.
+    - Rejects unsupported formats (e.g., YYYY-MM-DD).
+    - Confirms empty strings return ``None``.
+
+    :return: None
+    :rtype: NoneType
     """
     # Semester terms expected, otherwise returns None
     assert ld.to_date("Fall 2025") is None or ld.to_date("Fall 2025") == "Fall 2025"
@@ -19,14 +26,26 @@ def test_to_date_valid_and_invalid():
 @pytest.mark.db
 def test_to_date_out_of_range():
     """
-    Test "out of range" date
+    Validate :func:`ld.to_date` with out-of-range values.
+
+    - Ensures invalid dates (e.g., month > 12) return ``None``.
+
+    :return: None
+    :rtype: NoneType
     """
     assert ld.to_date("13/03/2025") is None
 
 @pytest.mark.db
 def test_to_float_and_clean_gpa_gre():
     """
-    Test for the float conversion/cleaning of gpa and gre data.
+    Validate :func:`ld.to_float`, :func:`ld.clean_gpa`, and :func:`ld.clean_gre`.
+
+    - Confirms conversion of valid floats.
+    - Ensures GPA outside range (0.0–4.0) is rejected.
+    - Ensures GRE values are validated by type.
+
+    :return: None
+    :rtype: NoneType
     """
     assert ld.to_float("4.0") == 4.0
     assert ld.to_float("") is None
@@ -38,7 +57,13 @@ def test_to_float_and_clean_gpa_gre():
 @pytest.mark.db
 def test_read_items_json_list(tmp_path):
     """
-    Creates json file, writes json dump to the file, tests read_items with array.
+    Validate :func:`ld.read_items` with a JSON array file.
+
+    - Creates a temporary file containing a JSON list.
+    - Confirms items are loaded correctly.
+
+    :param tmp_path: Temporary file path for testing.
+    :type tmp_path: pathlib.Path
     """
     f = tmp_path / "file.json"
     f.write_text(json.dumps([{"a": 1}, {"b": 2}]))
@@ -48,7 +73,12 @@ def test_read_items_json_list(tmp_path):
 @pytest.mark.db
 def test_read_items_json_object(tmp_path):
     """
-    Creates json file, writes json dump to file, tests read_items with json object
+    Validate :func:`ld.read_items` with a JSON object containing ``items``.
+
+    - Confirms data under the ``items`` key is returned.
+
+    :param tmp_path: Temporary file path for testing.
+    :type tmp_path: pathlib.Path
     """
     f = tmp_path / "file.json"
     f.write_text(json.dumps({"items": [{"c": 3}]}))
@@ -58,7 +88,12 @@ def test_read_items_json_object(tmp_path):
 @pytest.mark.db
 def test_read_items_json_lines(tmp_path):
     """
-    Creates json file with two lines, each of which is a json object, and tests read_items
+    Validate :func:`ld.read_items` with JSON-lines input.
+
+    - Confirms multiple JSON objects (one per line) are read correctly.
+
+    :param tmp_path: Temporary file path for testing.
+    :type tmp_path: pathlib.Path
     """
     f = tmp_path / "file.jsonl"
     f.write_text(json.dumps({"d": 4}) + "\n" + json.dumps({"e": 5}))
@@ -68,7 +103,13 @@ def test_read_items_json_lines(tmp_path):
 @pytest.mark.db
 def test_extract_data_creates_tuple():
     """
-    This test checks to make sure extract_data creates a tuple
+    Validate :func:`ld.extract_data` produces a tuple.
+
+    - Ensures returned tuple aligns with schema.
+    - Confirms ``p_id`` and URL mapping are handled correctly.
+
+    :return: None
+    :rtype: NoneType
     """
     data = {
         "program": "CS",

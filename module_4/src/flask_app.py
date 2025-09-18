@@ -23,12 +23,38 @@ scrape_running = False
 # I recycled much of the css from my original website
 @app.route("/")
 def analysis():
+    """
+    Render the analysis page.
+
+    This route fetches the latest analysis results from the database
+    using :func:`query_data.get_results` and passes them to the
+    ``analysis.html`` template for rendering.
+
+    :return: Rendered HTML template containing analysis results.
+    :rtype: str
+    """
     results = get_results()  # Always fetch fresh analysis results
     return render_template("analysis.html", results=results)
 
 # Setup for the pull_data button
 @app.route("/pull_data")
 def pull_data():
+    """
+    Trigger a background scraping and LLM processing task.
+
+    This route starts a background thread to scrape new applicant data,
+    clean it, save it to a timestamped JSON file, and then process it
+    with an external LLM module. Results are later inserted into the
+    database.
+
+    A global ``scrape_running`` flag ensures that only one scrape
+    runs at a time. If a scrape is already in progress, a flash
+    message is displayed instead.
+
+    :flash: Notifies the user whether a scrape is starting or already running.
+    :return: Redirect to the analysis page.
+    :rtype: werkzeug.wrappers.Response
+    """
     global scrape_running                                                       # Global check for scrape running
     if scrape_running:                                                          # This conditional statement prevents for overlapping execution of the scraper
         flash("A scrape is already running. Please wait until it finishes.")    # Flash message to let user know there is a scrape running already
@@ -36,6 +62,19 @@ def pull_data():
 
     # Function to run the scraper file
     def run_scraper():
+        """
+        Internal worker function to perform scraping and LLM processing.
+
+        - Calls :func:`scrape.scrape_data` to gather applicants.
+        - Cleans results with :func:`clean.clean_data`.
+        - Saves cleaned data with :func:`clean.save_data`.
+        - Runs the LLM subprocess to generate JSONL output.
+        - Loads LLM results into the database with :func:`load_data.main`.
+
+        Any errors encountered during scraping or LLM execution are
+        logged to stdout. ``scrape_running`` is reset to ``False`` when
+        the process completes.
+        """
         global scrape_running
         try:
             scrape_running = True 
@@ -96,6 +135,20 @@ def pull_data():
 # Routing setup for the "update analysis" button, it will only work if the scraper is NOT running.  
 @app.route("/update_analysis")
 def update_analysis():
+    """
+    Refresh the analysis page.
+
+    This route is used to update the displayed analysis results. If a
+    scrape is currently running, the update request is blocked and a
+    flash message is displayed.
+
+    Otherwise, the page is refreshed and a flash message is sent with
+    the current timestamp.
+
+    :flash: Notifies the user if analysis was refreshed or blocked by an active scrape.
+    :return: Redirect to the analysis page.
+    :rtype: werkzeug.wrappers.Response
+    """
     if scrape_running:  # If the scraper is running, send a flash message and do not run the scraper
         flash("Cannot update analysis while scraping is in progress. Please wait.")
         return redirect(url_for("analysis"))

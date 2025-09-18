@@ -2,6 +2,14 @@ import json
 from datetime import datetime
 
 def clean_data(results):
+    """
+    Clean and restructure scraped student records.
+
+    :param results: Raw list of student record dictionaries from ``scrape.py``.
+    :type results: list[dict]
+    :return: A list of cleaned dictionaries with standardized fields.
+    :rtype: list[dict]
+    """
     cleaned = []    # Empty list to populate with the reformatted student record dictionaries  
 
     # Loop through each student data record dictionary from the scrape.py file
@@ -37,8 +45,14 @@ def clean_data(results):
     return cleaned
 
 def save_data(cleaned):
+    """
+    Save cleaned student records to a JSON file.
 
-
+    :param cleaned: List of cleaned student record dictionaries.
+    :type cleaned: list[dict]
+    :return: The filename of the saved JSON file.
+    :rtype: str
+    """
     # Filename is now generated based on a time stamp rather than the default file name to avoid overwriting data
     filename = f"scraped_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
     
@@ -51,7 +65,14 @@ def save_data(cleaned):
     return filename
 
 def load_data(filename):
-    # Loads student data
+    """
+    Load student records from a JSON file.
+
+    :param filename: Path to the JSON file containing student records.
+    :type filename: str
+    :return: A list of student record dictionaries.
+    :rtype: list[dict]
+    """
     with open(filename, "r", encoding="utf-8") as f:
         data = json.load(f)
     

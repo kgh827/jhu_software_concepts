@@ -12,11 +12,45 @@ print = builtins.print  # allow tests to monkeypatch scrape.print
 # Alias
 def scrape_page(url: str):
     """
-    This is set up for the tests to be able to interact with scrape_page()
+    Convenience wrapper to scrape data from a single page.
+
+    This function is primarily intended for testing purposes,
+    allowing test cases to directly call :func:`scrape_data`
+    on a given URL.
+
+    :param url: URL of the page to scrape.
+    :type url: str
+    :return: Parsed applicant records from the page.
+    :rtype: list[dict]
     """
     return scrape_data(url)
 
 def scrape_data(max_applicants=None, latest_date_in_db=None):
+    """
+    Scrape applicant data from GradCafe survey pages.
+
+    Iteratively requests survey pages, parses the HTML table
+    structure, and extracts applicant records including
+    university, program, degree, GPA, GRE scores, notes,
+    and application status. Data is accumulated until
+    ``max_applicants`` is reached or no new records are found.
+
+    Key behaviors:
+      - Stops if a page contains no results or no new rows.
+      - Stops early if an applicant's URL already exists in the database
+        (via :func:`query_data.url_exists_in_db`).
+      - Supports multi-row data extraction (row 1: metadata,
+        row 2: GPA/GRE/location, row 3: notes).
+      - Includes safeguards to prevent runaway scraping.
+      - Waits 0.25 seconds between page requests.
+
+    :param max_applicants: Maximum number of applicants to scrape. If ``None``, scraping continues until no more data.
+    :type max_applicants: int | None
+    :param latest_date_in_db: Optional cutoff to stop scraping once older entries are reached. (Currently unused.)
+    :type latest_date_in_db: str | None
+    :return: List of applicant records, each represented as a dictionary.
+    :rtype: list[dict]
+    """
     # This will eventually hold all of the applicant dictionaries to be sent to json
     all_applicants = []
 

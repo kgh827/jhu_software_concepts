@@ -8,11 +8,15 @@ import src.load_data as ld
 @pytest.mark.db
 def test_read_items_variations(tmp_path):
     """
-    Tests different json file variations: 
-    "items:" json 
-    json list
-    json lines
-    empty/blank file
+    Test :func:`ld.read_items` with multiple formats.
+
+    - JSON object with ``items`` key.
+    - JSON list.
+    - JSON-lines format.
+    - Empty file fallback.
+
+    :param tmp_path: Temporary file path for testing.
+    :type tmp_path: pathlib.Path
     """
     # Json object with "items:"
     p1 = tmp_path / "obj.json"
@@ -37,8 +41,13 @@ def test_read_items_variations(tmp_path):
 @pytest.mark.db
 def test_to_date_formats():
     """
-    This tests how different variations of date formats are handled by to_date().
-    Need to eventually fix YYYY-DD-MM input
+    Test :func:`ld.to_date` with different date formats.
+
+    - Confirms parsing of slashed, worded, hyphenated, and month/year inputs.
+    - Ensures unsupported formats return ``None``.
+
+    :return: None
+    :rtype: NoneType
     """
     assert ld.to_date("02/03/2025") == date(2025,2,3)
     assert ld.to_date("3-Feb-2025") == date(2025,2,3)
@@ -53,8 +62,14 @@ def test_to_date_formats():
 @pytest.mark.db
 def test_to_float_and_clean_gpa_gre():
     """
-    Test a bunch of to_float() inputs to validate how it handles data
-    Then test clean_gpa and clean_gre similarly
+    Validate float conversion and cleaning functions.
+
+    - Tests :func:`ld.to_float` with valid, empty, and invalid values.
+    - Tests :func:`ld.clean_gpa` within and outside valid range.
+    - Tests :func:`ld.clean_gre` for quantitative/verbal and analytical writing.
+
+    :return: None
+    :rtype: NoneType
     """
     assert ld.to_float("3.5") == 3.5
     assert ld.to_float("NA") is None
@@ -76,6 +91,16 @@ def test_to_float_and_clean_gpa_gre():
 
 @pytest.mark.db
 def test_extract_data_keys_and_pid():
+    """
+    Validate :func:`ld.extract_data` key handling.
+
+    - Confirms ``p_id`` derived from URL numeric suffix.
+    - Confirms fallback to index if URL lacks numeric suffix.
+    - Validates extracted values are correctly mapped.
+
+    :return: None
+    :rtype: NoneType
+    """
     item = {
         "program":"CS",
         "comments":"note",
@@ -113,9 +138,18 @@ def test_extract_data_keys_and_pid():
 @pytest.mark.integration
 def test_main_db_push(tmp_path, monkeypatch, capsys):
     """
-    Creates jsonl file with two json items
-    Monkeypatches psycopg connection
-    Runs ld.main --> reads jsonl --> calls extract_data
+    Integration test for :func:`ld.main`.
+
+    - Creates a temporary JSONL file with two records.
+    - Monkeypatches :mod:`psycopg` connection and cursor.
+    - Confirms rows are inserted and success message is printed.
+
+    :param tmp_path: Temporary file path for testing.
+    :type tmp_path: pathlib.Path
+    :param monkeypatch: Pytest fixture for patching dependencies.
+    :type monkeypatch: _pytest.monkeypatch.MonkeyPatch
+    :param capsys: Pytest fixture to capture stdout/stderr.
+    :type capsys: _pytest.capture.CaptureFixture
     """
     p = tmp_path / "data.jsonl"
     lines = [
