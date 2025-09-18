@@ -1,5 +1,5 @@
 import sys, os, pytest
-import db
+import src.db as db 
 import psycopg
 
 # This manually imports the "db.py" file from src
