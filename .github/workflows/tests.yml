@@ -22,7 +22,7 @@ jobs:
           --health-retries 5
 
     steps:
-      # 1. Pull repo
+      # 1. Pull down repo
       - uses: actions/checkout@v3
 
       # 2. Set up Python
@@ -30,12 +30,14 @@ jobs:
         with:
           python-version: "3.10"
 
-      # 3. Install dependencies
+      # 3. Install dependencies from module_4 folder
       - name: Install dependencies
+        working-directory: module_4
         run: |
           python -m pip install --upgrade pip
-          pip install -r module_4/requirements.txt
+          pip install -r requirements.txt
 
-      # 4. Run pytest with markers (per prompt)
+      # 4. Run pytest from inside module_4
       - name: Run tests
+        working-directory: module_4
         run: pytest -m "web or buttons or analysis or db or integration" --maxfail=1 --disable-warnings -q
