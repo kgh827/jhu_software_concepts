@@ -41,6 +41,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-        - name: Run tests (full suite for coverage)
-          working-directory: module_4
-          run: pytest -vv
+      - name: Run tests (full suite for coverage)
+        working-directory: module_4
+        run: pytest -vv
