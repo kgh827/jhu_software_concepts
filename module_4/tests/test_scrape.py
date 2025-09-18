@@ -266,3 +266,15 @@ def test_scrape_existing_url_stop(monkeypatch):
     results = scrape.scrape_data(max_applicants=5)
     # CHeck to make sure there is only one result (because we faked a second url result)
     assert len(results) == 1
+
+def test_scrape_page_is_alias(monkeypatch):
+    import src.scrape as s
+    called = {}
+
+    def fake_scrape_data(arg, latest_date_in_db=None):
+        called["ran"] = True
+        return []
+
+    monkeypatch.setattr(s, "scrape_data", fake_scrape_data)
+    s.scrape_page("http://example.com")
+    assert called.get("ran") is True

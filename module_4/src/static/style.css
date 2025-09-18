@@ -1,0 +1,27 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 5px;
+  background: #000000;
+}
+h1 {  color: #35ea2f;
+}
+.card {
+  background: #000000;
+  border: 1px solid #35ea2f;
+  padding: 1px;
+  margin: 5px 2px;
+  color: #35ea2f
+}
+.buttons a {
+  margin-right: 5px;
+  background: #000000;
+  color: #35ea2f;
+  padding: 3px 3px;
+  text-decoration: none;
+  border-radius: 1px;
+  border: 1px solid #35ea2f  
+}
+
+.buttons a:hover {
+  background: rgba(159, 169, 161, 0.664);
+}

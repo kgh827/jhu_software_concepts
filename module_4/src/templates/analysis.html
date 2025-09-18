@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Grad School Cafe Data Analysis</title>
+
+  <!-- Link to style sheet -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  
+  <!-- Setup style of the flash messages.  made them red to make it more obvious something is going on -->
+  <style>
+    .flash-messages {
+      margin: 15px 0;
+    }
+    .flash {
+      background: #000000;
+      border: 1px solid #ea2f2f;
+      padding: 10px;
+      margin-bottom: 8px;
+      border-radius: 5px;
+      font-weight: bold;
+      color: #ea2f2f
+    }
+  </style>
+</head>
+<body>
+
+  <h1> Analysis </h1>
+
+  <!-- Setup of the "pull_data" and "update_analysis" buttons.  Update analysis button has a "hover over" message -->
+  <div class="buttons" style="text-align:right;">
+    <a href="{{ url_for('pull_data') }}">
+      Pull Data</a>
+    <a href="{{ url_for('update_analysis') }}" 
+       title="Refresh analysis results using the latest data already in the database.">
+       Update Analysis
+    </a>
+  </div>
+
+  <!-- Setup of flash messages for when buttons are pressed using a flask template -->
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <div class="flash-messages">
+        {% for msg in messages %}
+          <div class="flash">{{ msg }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <div class="card">
+    <h3>How many entries do you have in your database who have applied for Fall 2025?</h3>
+    <p>Answer: Applicant count: {{ results.fall_2025 }}</p>
+  </div>
+
+  <div class="card">
+    <h3>What percentage of entries are from International students (not American or Other) (to two decimal places)?</h3>
+    <p>Answer: Percent International: {{ results.pct_international }}</p>
+  </div>
+
+  <div class="card">
+    <h3>What is the average GPA, GRE Q, GRE V, GRE AW of applicants who provided these metrics?</h3>
+    <p>Answer: Average GPA: {{ results.avg_gpa_4 }}, 
+       Average GRE Q: {{ results.avg_gre_q }}, 
+       Average GRE V: {{ results.avg_gre_v }}, 
+       Average GRE AW: {{ results.avg_gre_aw }}</p>
+  </div>
+
+  <div class="card">
+    <h3>What is the average GPA of American students in Fall 2025?</h3>
+    <p>Answer: Average GPA American: {{ results.avg_gpa_us_fall25 }}</p>
+  </div>
+
+  <div class="card">
+    <h3>What percent of entries for Fall 2025 are Acceptances (to two decimal places)?</h3>
+    <p>Answer: Acceptance percent: {{ results.pct_accept_fall25 }}</p>
+  </div>
+
+  <div class="card">
+    <h3>What is the average GPA of applicants who applied for Fall 2025 who were accepted?</h3>
+    <p>Answer: Average GPA Acceptance: {{ results.avg_gpa_accept_fall25 }}</p>
+  </div>
+
+  <div class="card">
+    <h3>How many entries are for Johns Hopkins University, Masters in Computer Science?</h3>
+    <p>Answer: {{ results.jhu_masters_cs }}</p>
+  </div>
+
+  <div class="card">
+    <h3>How many 2025 CS PhD acceptances are there for Georgetown University?</h3>
+    <p>Answer: {{ results.georgetown_cs_phd }}</p>
+  </div>
+
+  <div class="card">
+    <h3>Applicants by degree:</h3>
+    <ul>
+      {% for row in results.degree_counts %}
+        <li>{{ row.degree }}: {{ row.n }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>Top 10 universities by applicant count:</h3>
+    <ul>
+      {% for row in results.top_universities %}
+        <li>{{ row.llm_generated_university }}: {{ row.n }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+</body>
+</html>
