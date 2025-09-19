@@ -1,4 +1,5 @@
 import pytest
+pytestmark = pytest.mark.scraper
 import src.scrape as scrape
 from bs4 import BeautifulSoup as RealSoup
 

@@ -2,7 +2,7 @@ import pytest
 import subprocess
 import src.flask_app as flask_app
 import src.flask_app as app
-
+pytestmark = pytest.mark.web
 """
 This file tests flask app responses when things go as intended
 """

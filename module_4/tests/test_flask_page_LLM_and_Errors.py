@@ -3,6 +3,7 @@ import types
 import time
 import src.flask_app as app
 import pytest
+pytestmark = pytest.mark.web
 
 class InlineThread:
     """

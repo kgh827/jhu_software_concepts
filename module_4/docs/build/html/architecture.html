@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Architecture &#8212; Grad Cafe Analytics 0.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=686e5160" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=01f34227"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Testing Guide" href="testing.html" />
+    <link rel="prev" title="Getting Started" href="getting-started.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="architecture">
+<h1>Architecture<a class="headerlink" href="#architecture" title="Link to this heading">¶</a></h1>
+<p>The system is organized around six major components.</p>
+<section id="scraping">
+<h2>1. Scraping<a class="headerlink" href="#scraping" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><strong>File:</strong> <code class="docutils literal notranslate"><span class="pre">src/scrape.py</span></code></p></li>
+<li><p>Uses <code class="docutils literal notranslate"><span class="pre">urllib3</span></code> + <code class="docutils literal notranslate"><span class="pre">BeautifulSoup</span></code> to extract applicant rows from Grad Café tables.</p></li>
+<li><p>Converts raw HTML into structured dictionaries.</p></li>
+</ul>
+</section>
+<section id="cleaning">
+<h2>2. Cleaning<a class="headerlink" href="#cleaning" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><strong>File:</strong> <code class="docutils literal notranslate"><span class="pre">src/clean.py</span></code></p></li>
+<li><p>Normalizes GPA, GRE, program/university names, and status fields.</p></li>
+<li><p>Produces schema-ready records.</p></li>
+</ul>
+</section>
+<section id="loading-database">
+<h2>3. Loading &amp; Database<a class="headerlink" href="#loading-database" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><strong>Files:</strong> <code class="docutils literal notranslate"><span class="pre">src/load_data.py</span></code>, <code class="docutils literal notranslate"><span class="pre">src/db.py</span></code></p></li>
+<li><p>Reads cleaned/LLM-enriched data and inserts into PostgreSQL (<code class="docutils literal notranslate"><span class="pre">applicants</span></code> table).</p></li>
+<li><p>Handles schema creation, idempotent inserts, and basic counts.</p></li>
+</ul>
+</section>
+<section id="querying-analysis">
+<h2>4. Querying &amp; Analysis<a class="headerlink" href="#querying-analysis" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><strong>File:</strong> <code class="docutils literal notranslate"><span class="pre">src/query_data.py</span></code></p></li>
+<li><p>Aggregates stats: totals, term filters, international %, GPA/GRE means, acceptance %, degree histograms, top universities.</p></li>
+<li><p>Returns a dictionary the web layer renders.</p></li>
+</ul>
+</section>
+<section id="web-application">
+<h2>5. Web Application<a class="headerlink" href="#web-application" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><strong>File:</strong> <code class="docutils literal notranslate"><span class="pre">src/flask_app.py</span></code></p></li>
+<li><p>Flask routes:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">/</span></code> — render analysis dashboard</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">/pull_data</span></code> — kick off scrape → clean → LLM → load (background)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">/update_analysis</span></code> — refresh view when scraping isn’t running</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="tests">
+<h2>6. Tests<a class="headerlink" href="#tests" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><strong>Folder:</strong> <code class="docutils literal notranslate"><span class="pre">tests/</span></code></p></li>
+<li><p>Unit + integration tests with <code class="docutils literal notranslate"><span class="pre">pytest</span></code> and custom markers (<code class="docutils literal notranslate"><span class="pre">db</span></code>, <code class="docutils literal notranslate"><span class="pre">scraper</span></code>, <code class="docutils literal notranslate"><span class="pre">web</span></code>, <code class="docutils literal notranslate"><span class="pre">analysis</span></code>, <code class="docutils literal notranslate"><span class="pre">integration</span></code>).</p></li>
+<li><p>Heavy use of monkeypatching to avoid real network/DB calls and to keep tests fast.</p></li>
+</ul>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Grad Cafe Analytics</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Architecture</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#scraping">1. Scraping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#cleaning">2. Cleaning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#loading-database">3. Loading &amp; Database</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#querying-analysis">4. Querying &amp; Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#web-application">5. Web Application</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tests">6. Tests</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/index.html">API Reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="getting-started.html" title="previous chapter">Getting Started</a></li>
+      <li>Next: <a href="testing.html" title="next chapter">Testing Guide</a></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Kevin G Householder.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.1.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="_sources/architecture.md.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,4 +1,6 @@
 import importlib
+import pytest
+pytestmark = pytest.mark.analysis
 
 # Test function to validate the __init__.py file
 def test_create_app():
