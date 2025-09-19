@@ -4,11 +4,20 @@ import json
 import time
 import pytest
 import builtins
+import socket
 
 # Ensure the project root is importable BEFORE touching src.*
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
+
+@pytest.fixture(autouse=True)
+def _no_dns(monkeypatch):
+    # Prevent DNS resolution errors leaking into logs
+    monkeypatch.setattr(
+        socket, "getaddrinfo",
+        lambda *a, **k: [(socket.AF_INET, socket.SOCK_STREAM, 6, '', ('127.0.0.1', 0))]
+    )
 
 @pytest.fixture(autouse=True)
 def _no_real_io(monkeypatch, tmp_path, request):
