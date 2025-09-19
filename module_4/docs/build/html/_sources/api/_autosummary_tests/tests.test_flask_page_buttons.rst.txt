@@ -1,0 +1,13 @@
+﻿tests.test\_flask\_page\_buttons
+================================
+
+.. automodule:: tests.test_flask_page_buttons
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      client
+      test_pull_data_once
+   

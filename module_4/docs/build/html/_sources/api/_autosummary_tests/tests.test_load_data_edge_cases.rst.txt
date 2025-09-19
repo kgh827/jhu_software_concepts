@@ -1,0 +1,16 @@
+﻿tests.test\_load\_data\_edge\_cases
+===================================
+
+.. automodule:: tests.test_load_data_edge_cases
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      test_extract_data_keys_and_pid
+      test_main_db_push
+      test_read_items_variations
+      test_to_date_formats
+      test_to_float_and_clean_gpa_gre
+   

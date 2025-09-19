@@ -1,0 +1,23 @@
+﻿tests.test\_query\_data
+=======================
+
+.. automodule:: tests.test_query_data
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      fake_psycopg
+      test_get_results_all_keys_and_values
+      test_main_prints
+      test_pct_formatting
+      test_url_exists_in_db_true_false
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      DummyConn
+      DummyCursor
+   

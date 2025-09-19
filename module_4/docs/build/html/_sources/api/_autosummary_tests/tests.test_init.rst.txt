@@ -1,0 +1,12 @@
+﻿tests.test\_init
+================
+
+.. automodule:: tests.test_init
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      test_create_app
+   

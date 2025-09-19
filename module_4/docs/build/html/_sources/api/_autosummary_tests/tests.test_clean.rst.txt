@@ -1,0 +1,14 @@
+﻿tests.test\_clean
+=================
+
+.. automodule:: tests.test_clean
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      test_clean_data_dict_fields
+      test_clean_data_program_or_university_only
+      test_save_and_load_data
+   

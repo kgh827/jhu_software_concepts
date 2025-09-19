@@ -1,0 +1,22 @@
+﻿tests.test\_db
+==============
+
+.. automodule:: tests.test_db
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      fake_psycopg
+      test_count_rows_returns_value
+      test_ensure_schema_runs
+      test_insert_rows_executes_insert
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      DummyConn
+      DummyCursor
+   

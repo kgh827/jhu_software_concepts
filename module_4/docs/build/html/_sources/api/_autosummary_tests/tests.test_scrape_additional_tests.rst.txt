@@ -1,0 +1,23 @@
+﻿tests.test\_scrape\_additional\_tests
+=====================================
+
+.. automodule:: tests.test_scrape_additional_tests
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      make_pool
+      patch_dependencies
+      test_added_this_page_only_header
+      test_decision_with_on_split
+      test_row2_path_and_sleep
+      test_row3_path_and_reset
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      DummyHTTPResponse
+   

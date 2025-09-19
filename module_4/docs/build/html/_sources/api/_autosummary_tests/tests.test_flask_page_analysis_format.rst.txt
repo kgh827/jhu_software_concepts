@@ -1,0 +1,13 @@
+﻿tests.test\_flask\_page\_analysis\_format
+=========================================
+
+.. automodule:: tests.test_flask_page_analysis_format
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      client
+      test_percentage_two_decimals
+   

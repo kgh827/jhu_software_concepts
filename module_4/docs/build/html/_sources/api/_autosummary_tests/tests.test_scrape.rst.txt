@@ -1,0 +1,26 @@
+﻿tests.test\_scrape
+==================
+
+.. automodule:: tests.test_scrape
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      patch_with_html
+      test_scrape_decision_using_on
+      test_scrape_existing_url_stop
+      test_scrape_limit
+      test_scrape_page_is_alias
+      test_scrape_row1
+      test_scrape_row2
+      test_scrape_row2_gre_q_aw
+      test_scrape_row3
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      DummyHTTPResponse
+   

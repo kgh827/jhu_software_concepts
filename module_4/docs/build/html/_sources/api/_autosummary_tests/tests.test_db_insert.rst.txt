@@ -1,0 +1,12 @@
+﻿tests.test\_db\_insert
+======================
+
+.. automodule:: tests.test_db_insert
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      test_insert_rows_idempotent
+   

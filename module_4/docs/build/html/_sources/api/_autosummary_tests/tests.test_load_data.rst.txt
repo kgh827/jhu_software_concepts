@@ -1,0 +1,18 @@
+﻿tests.test\_load\_data
+======================
+
+.. automodule:: tests.test_load_data
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      test_extract_data_creates_tuple
+      test_read_items_json_lines
+      test_read_items_json_list
+      test_read_items_json_object
+      test_to_date_out_of_range
+      test_to_date_valid_and_invalid
+      test_to_float_and_clean_gpa_gre
+   

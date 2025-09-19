@@ -35,10 +35,14 @@
             
   <section id="testing-guide">
 <h1>Testing Guide<a class="headerlink" href="#testing-guide" title="Link to this heading">¶</a></h1>
-<p>The project uses <strong>pytest</strong> with custom markers to separate concerns.</p>
-<section id="run-all-tests">
-<h2>Run All Tests<a class="headerlink" href="#run-all-tests" title="Link to this heading">¶</a></h2>
-<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="n">pytest</span>
+<p>This project uses <strong>pytest</strong> with custom <strong>markers</strong> to group tests and <strong>coverage</strong> to enforce 100% test coverage.</p>
+<blockquote>
+<div><p><strong>Run tests from the project root</strong>: <code class="docutils literal notranslate"><span class="pre">module_4/</span></code> (not from <code class="docutils literal notranslate"><span class="pre">docs/</span></code>).</p>
+</div></blockquote>
+<section id="quick-start">
+<h2>Quick Start<a class="headerlink" href="#quick-start" title="Link to this heading">¶</a></h2>
+<div class="highlight-powershell notranslate"><div class="highlight"><pre><span></span><span class="c"># run everything with coverage (enforces 100%)</span>
+<span class="n">pytest</span> <span class="p">-</span><span class="n">-cov</span><span class="p">=</span><span class="n">src</span> <span class="p">-</span><span class="n">-cov-report</span><span class="p">=</span><span class="n">term-missing</span> <span class="p">-</span><span class="n">-cov-fail-under</span><span class="p">=</span><span class="n">100</span>
 </pre></div>
 </div>
 </section>
@@ -75,7 +79,7 @@
 <li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Testing Guide</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#run-all-tests">Run All Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#quick-start">Quick Start</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api/index.html">API Reference</a></li>
