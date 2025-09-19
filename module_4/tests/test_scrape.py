@@ -101,54 +101,51 @@ def patch_with_html(monkeypatch, html: str, stop_after_first: bool = False):
 
     - First page returns supplied HTML.
     - Subsequent pages return empty table.
-    - Allows simulating :func:`url_exists_in_db`.
-
-    :param monkeypatch: Pytest monkeypatch fixture.
-    :type monkeypatch: _pytest.monkeypatch.MonkeyPatch
-    :param html: Fake HTML content.
-    :type html: str
-    :param stop_after_first: Whether to simulate duplicate URL after first record.
-    :type stop_after_first: bool
+    - Simulates url_exists_in_db behavior.
     """
 
-    # Creates a fake urllib3.poolmanager.request
+    # Dummy urllib3 pool that returns fixed HTML
     class DummyPool:
         def __init__(self):
             self.call_count = 0
-
-        
         def request(self, method, url, *args, **kwargs):
             self.call_count += 1
             if self.call_count == 1:
-                # First page returns the HTML 
                 return DummyHTTPResponse(html)
-            
-            # Pages after the first page return empty page
             return DummyHTTPResponse("<html><body><table></table></body></html>")
 
-    # Prevent use of real HTTP
+    # Ensure construction-time calls get the dummy pool
     monkeypatch.setattr(scrape.urllib3, "PoolManager", lambda: DummyPool())
 
-    # Use real beautifulsoup interaction
+    # If scrape.py holds a module-level client (e.g., HTTP = urllib3.PoolManager()),
+    # replace it so later calls do not use a real socket.
+    if hasattr(scrape, "HTTP"):
+        monkeypatch.setattr(scrape, "HTTP", DummyPool())
+
+    # Optional: neuter DNS resolution via the socket referenced inside scrape
+    import socket as _socket
+    if hasattr(scrape, "socket"):
+        monkeypatch.setattr(
+            scrape.socket,
+            "getaddrinfo",
+            lambda *a, **k: [(_socket.AF_INET, _socket.SOCK_STREAM, 6, "", ("127.0.0.1", 0))]
+        )
+
+    # Pass real BeautifulSoup wrapper through existing helper
     class DummySoup:
         def __init__(self, *args, **kwargs):
             self.soup = RealSoup(args[0], "html.parser")
         def __getattr__(self, name):
             return getattr(self.soup, name)
-
     monkeypatch.setattr(scrape, "BeautifulSoup", DummySoup)
 
-    # Fake DB check:
-    #- If stop_after_first = false --> url_exists_in_db() = false
-    #- If stop_after_first = true  --> returns false for first url, true for 2nd url (hits existing record)
+    # Fake DB check (stop_after_first toggles early-stop behavior)
     calls = {"n": 0}
     def fake_exists(url):
         calls["n"] += 1
         if stop_after_first:
             return calls["n"] > 1
         return False
-
-    # Prevent http
     monkeypatch.setattr(scrape, "url_exists_in_db", fake_exists)
 
 

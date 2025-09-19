@@ -3,6 +3,7 @@ import sys
 import json
 import time
 import pytest
+import builtins
 
 # Ensure the project root is importable BEFORE touching src.*
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))

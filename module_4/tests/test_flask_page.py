@@ -2,37 +2,52 @@ import pytest
 import subprocess
 import src.flask_app as flask_app
 import src.flask_app as app
-pytestmark = pytest.mark.web
-"""
-This file tests flask app responses when things go as intended
-"""
+import requests
+import urllib3
+import socket
+import subprocess
+import src.flask_app as app
+
 
 @pytest.fixture
 def client(monkeypatch):
-    """
-    Provide a Flask test client with monkeypatched dependencies.
+    # Stub subprocesses called by /pull_data and friends
 
-    This fixture:
-      - Replaces :func:`get_results` with dummy values.
-      - Stubs :func:`scrape_data`, :func:`clean_data`, :func:`save_data`,
-        and :func:`load_data` with no-op implementations.
-      - Yields a Flask test client for route testing.
+    monkeypatch.setattr(subprocess, "run", lambda *a, **k: subprocess.CompletedProcess(a, 0))
 
-    :param monkeypatch: Pytest fixture for patching dependencies.
-    :type monkeypatch: _pytest.monkeypatch.MonkeyPatch
-    :yield: A Flask test client instance.
-    :rtype: flask.testing.FlaskClient
-    """
+    # Stub urllib3 used by scraping paths (prevents DNS lookups)
+    # Mirrors the pattern used in scraper tests
+    class _DummyPool:
+        def request(self, method, url, *args, **kwargs):
+            class _Resp:
+                # urllib3 expects a .data attribute (bytes)
+                data = b"<html><body><table></table></body></html>"
+            return _Resp()
+    monkeypatch.setattr(urllib3, "PoolManager", lambda: _DummyPool())
+
+    # Stub requests in case any route uses it directly
+    class _RequestsResp:
+        status_code = 200
+        text = "{}"
+        def json(self): return {}
+    monkeypatch.setattr(requests.Session, "request",
+                        lambda self, method, url, *a, **k: _RequestsResp())
+
+    # (Optional but belt-and-suspenders) neuter raw DNS to avoid stray getaddrinfo calls
+    monkeypatch.setattr(socket, "getaddrinfo",
+                        lambda *a, **k: [(socket.AF_INET, socket.SOCK_STREAM, 6, '', ('127.0.0.1', 0))])
+
+
     monkeypatch.setattr(app, "get_results", lambda: {"total": 1, "fall_2025": 1})
     monkeypatch.setattr(app, "scrape_data", lambda *a, **k: [])
     monkeypatch.setattr(app, "clean_data", lambda d: d)
     monkeypatch.setattr(app, "save_data", lambda d: "fake.json")
-    monkeypatch.setattr(app, "load_data", lambda f: None)
+    monkeypatch.setattr(app.load_data, "main", lambda *a, **k: None)
 
-    # Setting up fake flask http request for testing
     with app.app.test_client() as client:
         yield client
 
+@pytest.mark.web
 def test_index_route(client):
     """
     Verify the index (``/``) route.
@@ -47,6 +62,7 @@ def test_index_route(client):
     assert resp.status_code == 200
     assert b"Analysis" in resp.data
 
+@pytest.mark.web
 def test_pull_data_route(client):
     """
     Verify the ``/pull_data`` route.
@@ -61,6 +77,7 @@ def test_pull_data_route(client):
     assert resp.status_code == 200
     assert b"Scraping + LLM processing started" in resp.data
 
+@pytest.mark.web
 def test_update_analysis_route(client):
     """
     Verify the ``/update_analysis`` route.
@@ -75,6 +92,7 @@ def test_update_analysis_route(client):
     assert resp.status_code == 200
     assert b"<title>Grad School Cafe Data Analysis</title>" in resp.data
 
+@pytest.mark.web
 def test_mock_llm(monkeypatch):
     """
     Test behavior when the LLM subprocess runs successfully.

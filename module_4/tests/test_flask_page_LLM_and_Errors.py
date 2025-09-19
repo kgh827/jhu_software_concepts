@@ -3,7 +3,6 @@ import types
 import time
 import src.flask_app as app
 import pytest
-pytestmark = pytest.mark.web
 
 class InlineThread:
     """
@@ -39,6 +38,7 @@ def client_base(monkeypatch):
     with app.app.test_client() as c:
         yield c
 
+@pytest.mark.web
 def test_pull_data_when_running(client_base, monkeypatch):
     """
     Verify ``/pull_data`` rejects requests if scraping is already running.
@@ -57,6 +57,7 @@ def test_pull_data_when_running(client_base, monkeypatch):
     assert resp.status_code == 200
     assert b"already running" in resp.data.lower()
 
+@pytest.mark.web
 def test_pull_data_llm_failure_exits_and_resets(monkeypatch, tmp_path, client_base):
     """
     Simulate LLM subprocess failure.
@@ -98,6 +99,7 @@ def test_pull_data_llm_failure_exits_and_resets(monkeypatch, tmp_path, client_ba
     assert called["n"] == 0             # LLM failed which causes early return, no DB load
     assert app.scrape_running is False  # Reset scrape_running to false
 
+@pytest.mark.web
 def test_pull_data_scrape_raises_still_resets(monkeypatch, client_base):
     """
     Verify scrape errors are handled gracefully.
@@ -122,6 +124,7 @@ def test_pull_data_scrape_raises_still_resets(monkeypatch, client_base):
     assert resp.status_code == 200
     assert app.scrape_running is False
 
+@pytest.mark.web
 def test_pull_data_llm_success_calls_load(monkeypatch, tmp_path, client_base):
     """
     Simulate successful LLM processing.
@@ -161,6 +164,7 @@ def test_pull_data_llm_success_calls_load(monkeypatch, tmp_path, client_base):
     assert called["args"] and called["args"].endswith(".jsonl")
     assert app.scrape_running is False
 
+@pytest.mark.web
 def test_update_analysis_during_scrape(monkeypatch, client_base):
     """
     Verify ``/update_analysis`` refuses while scraping is in progress.

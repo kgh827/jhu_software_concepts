@@ -113,7 +113,7 @@ def pull_data():
                         check=True
                     )
 
-                print("LLM processing finished successfully.")
+                #print("LLM processing finished successfully.")
                 load_data.main(llm_output)  # Load the new LLM data into the DB
 
             except subprocess.CalledProcessError as e:
