@@ -1,5 +1,4 @@
 import pytest
-pytestmark = pytest.mark.scraper
 import src.scrape as scrape
 from bs4 import BeautifulSoup as RealSoup
 
@@ -14,7 +13,7 @@ class DummyHTTPResponse:
     def __init__(self, html: str):
         self.data = html.encode("utf-8")
 
-@pytest.mark.scraper
+@pytest.mark.integration
 def test_scrape_decision_using_on(monkeypatch):
     """
     Verify decision parsing when status contains "on".
@@ -44,7 +43,7 @@ def test_scrape_decision_using_on(monkeypatch):
     # Tests that without "on" the cell should contain applicant_status only
     assert r[0]["applicant_status"] == "Waitlisted (no date)"  # no ' on ' split
 
-@pytest.mark.scraper
+@pytest.mark.integration
 def test_scrape_row2_gre_q_aw(monkeypatch):
     """
     Verify GRE extraction in row 2.
@@ -78,7 +77,7 @@ def test_scrape_row2_gre_q_aw(monkeypatch):
     assert r[0]["semester"].startswith("Spring")
     assert "American" in r[0]["student_location"]
 
-@pytest.mark.scraper
+@pytest.mark.integration
 def test_scrape_limit(monkeypatch):
     """
     Verify scraper stops at max_applicants limit.
@@ -153,7 +152,7 @@ def patch_with_html(monkeypatch, html: str, stop_after_first: bool = False):
     monkeypatch.setattr(scrape, "url_exists_in_db", fake_exists)
 
 
-@pytest.mark.scraper
+@pytest.mark.integration
 def test_scrape_row1(monkeypatch):
     """
     Verify row 1 handling.
@@ -186,7 +185,7 @@ def test_scrape_row1(monkeypatch):
     assert results and results[0]["university"] == "Test University"
 
 
-@pytest.mark.scraper
+@pytest.mark.integration
 def test_scrape_row2(monkeypatch):
     """
     Verify row 2 handling.
@@ -215,7 +214,7 @@ def test_scrape_row2(monkeypatch):
     assert results and "gpa" in results[0]
 
 
-@pytest.mark.scraper
+@pytest.mark.integration
 def test_scrape_row3(monkeypatch):
     """
     Verify row 3 handling.
@@ -245,7 +244,7 @@ def test_scrape_row3(monkeypatch):
     assert results and "notes" in results[0]
 
 
-@pytest.mark.scraper
+@pytest.mark.integration
 def test_scrape_existing_url_stop(monkeypatch):
     """
     Verify scraper halts on existing URL.
@@ -275,6 +274,7 @@ def test_scrape_existing_url_stop(monkeypatch):
     # CHeck to make sure there is only one result (because we faked a second url result)
     assert len(results) == 1
 
+@pytest.mark.integration
 def test_scrape_page_is_alias(monkeypatch):
     """
     Verify :func:`scrape.scrape_page` delegates to :func:`scrape.scrape_data`.

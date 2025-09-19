@@ -62,7 +62,7 @@ def patch_dependencies(monkeypatch, pool_instance):
     # Force url_exists_in_db = false
     monkeypatch.setattr(scrape, "url_exists_in_db", lambda url: False)
 
-@pytest.mark.scraper
+@pytest.mark.integration
 def test_decision_with_on_split(monkeypatch):
     """
     Verify decision/status split when "on" keyword is present.
@@ -94,7 +94,7 @@ def test_decision_with_on_split(monkeypatch):
     # Check that decision_date has been populated.
     assert r[0]["decision_date"] == "2025-02-05"
 
-@pytest.mark.scraper
+@pytest.mark.integration
 def test_row2_path_and_sleep(monkeypatch):
     """
     Verify row 2 handling without row 3.
@@ -136,7 +136,7 @@ def test_row2_path_and_sleep(monkeypatch):
     assert r and r[0]["gpa"] == "3.9" and r[0]["gre_q"] == "169"
     assert sleep_called["n"] >= 1 
 
-@pytest.mark.scraper
+@pytest.mark.integration
 def test_added_this_page_only_header(monkeypatch):
     """
     Verify scraper behavior when only table header is present.
@@ -154,7 +154,7 @@ def test_added_this_page_only_header(monkeypatch):
     # Checks for no data
     assert r == []
 
-@pytest.mark.scraper
+@pytest.mark.integration
 def test_row3_path_and_reset(monkeypatch):
     """
     Verify row 3 path and reset logic.
